@@ -17,6 +17,7 @@
   },
   "devDependencies": {
     "@types/express": "^4.17.17",
-    "nodemon": "^2.0.22"
+    "nodemon": "^2.0.22",
+    "prisma": "^4.14.0"
   }
 }
