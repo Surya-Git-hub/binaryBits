@@ -6,7 +6,7 @@ router.get("/", userController.getAllUsers);
 
 // router.get("/:user-id", userController.getOneUser);
 
-router.post("/sign-up", userController.createNewUser);
+router.post("/sign-up", await userController.createNewUser);
 
 // router.post("/sign-in", userController.createNewUser);
 
