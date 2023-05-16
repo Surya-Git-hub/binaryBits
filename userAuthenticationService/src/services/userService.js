@@ -89,12 +89,12 @@ const createNewUser = async (req, res) => {
   const salt = await bcrypt.genSalt(saltRounds);
   const hashedPassword = await bcrypt.hash(password, salt);
   const userToInsert = {
-    name, hashedPassword, email,
+    name, pass:hashedPassword, email,
     emailVerified: false,
   };
-  const createdUser = prisma.user.create(userToInsert);
-  let vlink = generateVerificationLink(createdUser.id, email, name);
-  let verificaton = verifyEmail(email, name, vlink);
+  const createdUser = await prisma.user.create({ data: userToInsert });
+  // let vlink = generateVerificationLink(createdUser.id, email, name);
+  // let verificaton = verifyEmail(email, name, vlink);
   res.status(201).send({ status: "OK", data: createdUser });
 };
 

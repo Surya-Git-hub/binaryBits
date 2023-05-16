@@ -15,5 +15,5 @@ model user {
   email String  @unique
   name  String?
   pass  String
-  emailVerified Boolean
+  emailVerified Boolean @default(false)
 }
