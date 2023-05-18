@@ -1,10 +1,15 @@
 const express = require("express");
 const userController = require('../controllers/userController');
-const {isAuthenticated} = require("../middlewares/isAuthenticated");
+const { isAuthenticated } = require("../middlewares/isAuthenticated");
+const { isEmailVerified } = require("../middlewares/isEmailVerified");
 const router = express.Router();
 
 router.get("/", userController.getAllUsers);
-router.get("/protected", isAuthenticated, userController.getAllUsers);
+
+router.get("/verify", userController.verifyEmail);
+router.get("/reVerifyEmail",isAuthenticated,userController.reVerifyEmail)
+
+router.get("/protected", isAuthenticated, isEmailVerified, userController.getAllUsers);
 
 
 // router.get("/:user-id", userController.getOneUser);

@@ -1,8 +1,14 @@
 const userService = require("../services/userService");
+const { checkVerificationLink } = require("../utils/checkVerificationLink");
 
 const getAllUsers = async (req, res) => {
-    const allusers = await userService.getAllUsers();
-    res.send({ status: "OK", data: allusers });
+    try {
+        const allusers = await userService.getAllUsers();
+        res.send({ status: "OK", data: allusers });
+    } catch (error) {
+        console.log("error", error);
+        res.status(500).json({ error: error });
+    }
 };
 
 // const getOneUser = (req, res) => {
@@ -14,26 +20,25 @@ const createNewUser = async (req, res) => {
     try {
         const { name, email, password } = req.body;
         if (!name || !email || !password) {
-            return res.status(400).json({ error: 'Name, email and password are required' });
+            res.status(400).json({ error: 'Name, email and password are required' });
         }
         const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
         if (!emailRegex.test(email)) {
-            return res.status(400).json({ error: 'Invalid email' });
+            res.status(400).json({ error: 'Invalid email' });
         }
         const passRegex = /^(?=.*[!@#$%^&*(),.?":{}|<>])(?=.*[A-Z])(?=.*[a-z])(?=.*\d).{8,}$/;
         if (!passRegex.test(password)) {
-            return res.status(400).json({ error: 'password should contain atleast one special char,one number,one uppercase letter,one lowercase letter' });
+            res.status(400).json({ error: 'password should contain atleast one special char,one number,one uppercase letter,one lowercase letter' });
         }
         const nameRegex = /^[a-zA-Z]{3,}$/;
         if (!nameRegex.test(name)) {
-            return res.status(400).json({ error: 'only alphabets allowed of atleast of length 3' });
+            res.status(400).json({ error: 'only alphabets allowed of atleast of length 3' });
         }
 
         await userService.createNewUser(req, res);
-    }
-    catch (error) {
+    } catch (error) {
         console.log("error", error);
-        return res.status(400).json({ error: error });
+        res.status(500).json({ error: error });
     }
 };
 
@@ -41,19 +46,47 @@ const userLogin = async (req, res) => {
     try {
         const { email, password } = req.body;
         if (!email || !password) {
-            return res.status(400).json({ error: 'email and password are required' });
+            res.status(400).json({ error: 'email and password are required' });
         }
         const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
         if (!emailRegex.test(email)) {
-            return res.status(400).json({ error: 'Invalid email' });
+            res.status(400).json({ error: 'Invalid email' });
         }
         const passRegex = /^(?=.*[!@#$%^&*(),.?":{}|<>])(?=.*[A-Z])(?=.*[a-z])(?=.*\d).{8,}$/;
         if (!passRegex.test(password)) {
-            return res.status(400).json({ error: 'password should contain atleast one special char,one number,one uppercase letter,one lowercase letter' });
+            res.status(400).json({ error: 'password should contain atleast one special char,one number,one uppercase letter,one lowercase letter' });
         }
         await userService.userLogin(req, res);
     } catch (error) {
+        console.log("error", error);
+        res.status(500).json({ error: error });
+    }
+}
 
+const verifyEmail = async (req, res) => {
+    try {
+        const token = req.query.token;
+        if (!token) {
+            res.status(400).json({ error: 'token is invalid or not found' });
+        }
+        const result = await checkVerificationLink(token);
+        if (!result.match) {
+            res.status(400).json({ error: 'token not matched' });
+        }
+        await userService.verifyEmail(req, res, result);
+    } catch (error) {
+        console.log("error", error);
+        res.status(500).json({ error: error });
+    }
+}
+
+const reVerifyEmail = async(req,res)=>{
+    try {
+        await userService.reVerifyEmail(req,res);
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ error: error });
+        
     }
 }
 
@@ -72,6 +105,8 @@ module.exports = {
     // getOneuser,
     createNewUser,
     userLogin,
+    verifyEmail,
+    reVerifyEmail,
     // updateOneuser,
     // deleteOneuser,
 };

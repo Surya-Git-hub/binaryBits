@@ -4,12 +4,20 @@ const prisma = new PrismaClient();
 const bcrypt = require('bcrypt');
 const { checkDuplicateEmail } = require("../utils/checkDuplicateEmail");
 const { comparePasswords } = require("../utils/comparePasswords");
-const {createJWT} = require("../utils/createJWT")
+const { createJWT } = require("../utils/createJWT")
+const { generateVerificationLink } = require("../utils/generateVerificationLink");
+const { verifyMail } = require("../utils/verifyMail");
 
 const getAllUsers = async () => {
-  const allusers = await prisma.user.findMany();
-  console.log(allusers);
-  return allusers;
+  try {
+    const allusers = await prisma.user.findMany();
+    console.log(allusers);
+    return allusers;
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'internal server error' })
+  }
+
 };
 
 // const getOneuser = () => {
@@ -33,16 +41,16 @@ const createNewUser = async (req, res) => {
       emailVerified: false,
     };
     const createdUser = await prisma.user.create({ data: userToInsert });
-    // let vlink = generateVerificationLink(createdUser.id, email, name);
-    // let verificaton = verifyEmail(email, name, vlink);
-    const token = createJWT(createdUser.id);
+    let vlink = await generateVerificationLink(email, createdUser.id);
+    let verificaton = await verifyMail(email, name, vlink);
+    const token = await createJWT(createdUser.id);
     res.cookie("token", token, {
       withCredentials: true,
       httpOnly: false,
     });
     res
       .status(201)
-      .json({ message: "User signed in successfully", success: true, createdUser });
+      .json({ message: "User signed in successfully", success: true, createdUser, emaiVerification: verificaton });
     // res.status(201).send({ status: "OK", data: createdUser });}
   } catch (error) {
     console.error(error);
@@ -64,12 +72,42 @@ const userLogin = async (req, res) => {
     if (!comparePasswords(password, user.pass)) {
       return res.json({ message: 'Incorrect password or email' })
     }
-    const token = createJWT(user.id);
+    const token = await createJWT(user.id);
     res.cookie("token", token, {
       withCredentials: true,
       httpOnly: false,
     });
     res.status(201).json({ message: "User logged in successfully", success: true });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'internal server error' })
+  }
+}
+
+const verifyEmail = async (req, res, result) => {
+  try {
+    const updatedUser = await prisma.user.update({
+      where: { id: result.id },
+      data: {
+        emailVerified: true,
+      },
+    });
+    console.log("updated user >> ", updatedUser);
+    res.status(201).json({ message: "email verified successfully", success: true });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'internal server error' })
+  }
+}
+
+const reVerifyEmail = async (req, res)=>{
+  try {
+    let { email, id, name } = req.body;
+    let vlink = await generateVerificationLink(email, id);
+    let verificaton = await verifyMail(email, name, vlink);
+    res
+      .status(201)
+      .json({ message: "email resent  successfully", success: true, emaiVerification: verificaton });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'internal server error' })
@@ -89,6 +127,8 @@ module.exports = {
   // getOneuser,
   createNewUser,
   userLogin,
+  verifyEmail,
+  reVerifyEmail,
   // updateOneuser,
   // deleteOneuser,
 };
