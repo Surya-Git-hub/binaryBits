@@ -16,7 +16,7 @@ const isEmailVerified = async (req, res, next) => {
         if (user.emailVerified) {
             next()
         } else {
-            res.json({ status: false, message: "email not verified", resendEmailLink: process.env.BASE_URL + "/reVerifyEmail" })
+            res.json({ status: false, message: "email not verified", resendEmailLink: process.env.BASE_URL + "/re-verify-email" })
         }
     } catch (error) {
         console.log(error);

@@ -7,7 +7,9 @@ const router = express.Router();
 router.get("/", userController.getAllUsers);
 
 router.get("/verify", userController.verifyEmail);
-router.get("/reVerifyEmail",isAuthenticated,userController.reVerifyEmail)
+router.get("/re-verify-email",isAuthenticated,userController.reVerifyEmail)
+router.get("/verify-magic-link",userController.verifyMagicLink)
+router.post("/magic-login",userController.magicLogin);
 
 router.get("/protected", isAuthenticated, isEmailVerified, userController.getAllUsers);
 

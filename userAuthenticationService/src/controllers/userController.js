@@ -1,5 +1,6 @@
 const userService = require("../services/userService");
 const { checkVerificationLink } = require("../utils/checkVerificationLink");
+const {verifyJWT} = require("../utils/verifyJWT");
 
 const getAllUsers = async (req, res) => {
     try {
@@ -89,6 +90,40 @@ const reVerifyEmail = async(req,res)=>{
         
     }
 }
+const magicLogin = async(req,res)=>{
+    try {
+        const { email } = req.body;
+        if (!email) {
+            res.status(400).json({ error: 'email is required' });
+        }
+        const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+        if (!emailRegex.test(email)) {
+            res.status(400).json({ error: 'Invalid email' });
+        }
+        await userService.magicLogin(req,res);
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ error: error });
+    }
+}
+const verifyMagicLink = async(req,res)=>{
+    try {
+        const token = req.query.token;
+        if (!token) {
+            res.status(400).json({ error: 'token is invalid or not found' });
+        }
+        const result = await verifyJWT(token);
+        console.log("result >>",result);
+        if (!result) {
+            res.status(400).json({ error: 'token verification failed' });
+        }
+        await userService.verifyMagicLink(req,res,result);
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ error: error }); 
+    }
+}
 
 // const updateOneuser = (req, res) => {
 //     const updateduser = userService.updateOneuser();
@@ -107,6 +142,8 @@ module.exports = {
     userLogin,
     verifyEmail,
     reVerifyEmail,
+    magicLogin,
+    verifyMagicLink
     // updateOneuser,
     // deleteOneuser,
 };

@@ -6,7 +6,7 @@ const { checkDuplicateEmail } = require("../utils/checkDuplicateEmail");
 const { comparePasswords } = require("../utils/comparePasswords");
 const { createJWT } = require("../utils/createJWT")
 const { generateVerificationLink } = require("../utils/generateVerificationLink");
-const { verifyMail } = require("../utils/verifyMail");
+const { verifyMail,sendMagicLink } = require("../utils/verifyMail");
 
 const getAllUsers = async () => {
   try {
@@ -31,7 +31,7 @@ const createNewUser = async (req, res) => {
   try {
     let { name, password, email } = req.body;
     if (await checkDuplicateEmail(email)) {
-      return res.status(400).json({ error: 'email already exist' });
+      res.status(400).json({ error: 'email already exist' });
     }
     const saltRounds = 10;
     const salt = await bcrypt.genSalt(saltRounds);
@@ -67,10 +67,10 @@ const userLogin = async (req, res) => {
       },
     });
     if (!user) {
-      return res.json({ message: "User doesn't exist" });
+      res.json({ message: "User doesn't exist" });
     }
     if (!comparePasswords(password, user.pass)) {
-      return res.json({ message: 'Incorrect password or email' })
+      res.json({ message: 'Incorrect password or email' })
     }
     const token = await createJWT(user.id);
     res.cookie("token", token, {
@@ -100,20 +100,63 @@ const verifyEmail = async (req, res, result) => {
   }
 }
 
-const reVerifyEmail = async (req, res)=>{
+const reVerifyEmail = async (req, res) => {
   try {
     let { email, id, name } = req.body;
     let vlink = await generateVerificationLink(email, id);
     let verificaton = await verifyMail(email, name, vlink);
     res
       .status(201)
-      .json({ message: "email resent  successfully", success: true, emaiVerification: verificaton });
+      .json({ message: "email resent successfully", success: true, emailVerification: verificaton });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'internal server error' })
+  }
+}
+const magicLogin = async (req, res) => {
+  try {
+    let { email } = req.body;
+    const user = await prisma.user.findUnique({
+      where: {
+        email: email,
+      },
+    });
+    if (!user) {
+      res.json({ message: "User doesn't exist" });
+    }
+    const token = await createJWT(user.id, 60 * 5);
+    let vlink = `${process.env.BASE_URL}/verify-magic-link?token=${token}`;
+    let verificaton = await sendMagicLink(email, user.name, vlink);
+    res
+      .status(201)
+      .json({ message: "Magic Link sent successfully", success: true, sendStatus: verificaton });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'internal server error' })
   }
 }
 
+const verifyMagicLink = async (req, res, result) => {
+  try {
+    const user = await prisma.user.findUnique({
+      where: {
+        id: result.id
+      }
+    });
+    if (!user) {
+      res.json({ message: "User doesn't exist" });
+    }
+    const token = await createJWT(user.id);
+    res.cookie("token", token, {
+      withCredentials: true,
+      httpOnly: false,
+    });
+    res.status(201).json({ message: "User logged in successfully", success: true });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'internal server error' })
+  }
+}
 // const updateOneuser = () => {
 //   return;
 // };
@@ -129,6 +172,8 @@ module.exports = {
   userLogin,
   verifyEmail,
   reVerifyEmail,
+  magicLogin,
+  verifyMagicLink
   // updateOneuser,
   // deleteOneuser,
 };
