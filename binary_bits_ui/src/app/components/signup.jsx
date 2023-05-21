@@ -1,7 +1,51 @@
+"use client"
+
 import React from 'react'
+import { useState } from 'react';
 import { ArrowRight } from 'lucide-react'
 
 export default function SignUp() {
+
+
+    const [formData, setFormData] = useState({
+        name: '',
+        email: '',
+        password: ''
+    });
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        try {
+            const res = await fetch('http://localhost:5000/api/user/sign-up', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            });
+
+            if (res.ok) {
+                // Handle successful signup
+                console.log('Signup successful');
+            } else {
+                // Handle signup failure
+                console.log('Signup failed',res);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    };
+
+    const handleChange = (e) => {
+        e.preventDefault();
+         setFormData((prevData) => ({
+            ...prevData,
+            [e.target.id]: e.target.value
+        }));
+        console.log(e.target.id, " ", e.target.value);
+    };
+
     return (
         <section className="rounded-md bg-black/80 p-2">
             <div className="flex items-center justify-center bg-white px-4 py-10 sm:px-6 sm:py-16 lg:px-8">
@@ -31,7 +75,7 @@ export default function SignUp() {
                             Sign In
                         </a>
                     </p>
-                    <form action="#" method="POST" className="mt-8">
+                    <form action="#" method="POST" onSubmit={async(e)=>handleSubmit(e)} className="mt-8">
                         <div className="space-y-5">
                             <div>
                                 <label htmlFor="name" className="text-base font-medium text-gray-900">
@@ -44,6 +88,7 @@ export default function SignUp() {
                                         type="text"
                                         placeholder="Richard Hendricks"
                                         id="name"
+                                        onChange={(e)=>handleChange(e)}
                                     ></input>
                                 </div>
                             </div>
@@ -58,6 +103,7 @@ export default function SignUp() {
                                         type="email"
                                         placeholder="richard.hendricks@piedpiper.com"
                                         id="email"
+                                        onChange={(e)=>handleChange(e)}
                                     ></input>
                                 </div>
                             </div>
@@ -74,12 +120,14 @@ export default function SignUp() {
                                         type="password"
                                         placeholder="***********"
                                         id="password"
+                                        onChange={(e)=>handleChange(e)}
                                     ></input>
                                 </div>
                             </div>
                             <div>
                                 <button
-                                    type="button"
+                                    // type="button"
+                                    type="submit"
                                     className="inline-flex w-full items-center justify-center rounded-md bg-black px-3.5 py-2.5 font-semibold leading-7 text-white hover:bg-black/80"
                                 >
                                     Create Account <ArrowRight className="ml-2" size={16} />

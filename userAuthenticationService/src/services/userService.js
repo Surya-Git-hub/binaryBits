@@ -31,7 +31,7 @@ const createNewUser = async (req, res) => {
   try {
     let { name, password, email } = req.body;
     if (await checkDuplicateEmail(email)) {
-      res.status(400).json({ error: 'email already exist' });
+      return res.status(400).json({ error: 'email already exist' });
     }
     const saltRounds = 10;
     const salt = await bcrypt.genSalt(saltRounds);

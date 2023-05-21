@@ -1,5 +1,6 @@
 import React from 'react'
 import SignUp from '../components/signup'
+
 const page = () => {
     return (
         <div className="flex items-center justify-center h-screen">
@@ -10,4 +11,4 @@ const page = () => {
     )
 }
 
-export default page
+export default page;
