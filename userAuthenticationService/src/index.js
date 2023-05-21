@@ -3,6 +3,7 @@ const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser")
 const cors = require("cors");
 const userRouter = require("./routes/userRoutes");
+require("dotenv").config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
