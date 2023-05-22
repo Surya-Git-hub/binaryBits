@@ -15,7 +15,7 @@ const getAllUsers = async () => {
     return allusers;
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'internal server error' })
+    return res.status(500).json({ message: 'internal server error' })
   }
 
 };
@@ -48,13 +48,13 @@ const createNewUser = async (req, res) => {
       withCredentials: true,
       httpOnly: false,
     });
-    res
+    return res
       .status(201)
       .json({ message: "User signed in successfully", success: true, createdUser, emaiVerification: verificaton });
     // res.status(201).send({ status: "OK", data: createdUser });}
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'internal server error' })
+    return res.status(500).json({ message: 'internal server error' })
   }
 };
 
@@ -67,20 +67,20 @@ const userLogin = async (req, res) => {
       },
     });
     if (!user) {
-      res.json({ message: "User doesn't exist" });
+      return res.status(404).json({ message: "User doesn't exist" });
     }
     if (!comparePasswords(password, user.pass)) {
-      res.json({ message: 'Incorrect password or email' })
+     return res.status(401).json({ message: 'Incorrect password or email' })
     }
     const token = await createJWT(user.id);
     res.cookie("token", token, {
       withCredentials: true,
       httpOnly: false,
     });
-    res.status(201).json({ message: "User logged in successfully", success: true });
+    return res.status(200).json({ message: "User logged in successfully", success: true });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'internal server error' })
+    return res.status(500).json({ message: 'internal server error' })
   }
 }
 
@@ -93,10 +93,10 @@ const verifyEmail = async (req, res, result) => {
       },
     });
     console.log("updated user >> ", updatedUser);
-    res.status(201).json({ message: "email verified successfully", success: true });
+    return res.status(200).json({ message: "email verified successfully", success: true });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'internal server error' })
+    return res.status(500).json({ message: 'internal server error' })
   }
 }
 
@@ -105,12 +105,12 @@ const reVerifyEmail = async (req, res) => {
     let { email, id, name } = req.body;
     let vlink = await generateVerificationLink(email, id);
     let verificaton = await verifyMail(email, name, vlink);
-    res
-      .status(201)
+    return res
+      .status(200)
       .json({ message: "email resent successfully", success: true, emailVerification: verificaton });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'internal server error' })
+    return res.status(500).json({ message: 'internal server error' })
   }
 }
 const magicLogin = async (req, res) => {
@@ -122,17 +122,17 @@ const magicLogin = async (req, res) => {
       },
     });
     if (!user) {
-      res.json({ message: "User doesn't exist" });
+      return res.status(404).json({ message: "User doesn't exist" });
     }
     const token = await createJWT(user.id, 60 * 5);
     let vlink = `${process.env.BASE_URL}/verify-magic-link?token=${token}`;
     let verificaton = await sendMagicLink(email, user.name, vlink);
-    res
-      .status(201)
+    return res
+      .status(200)
       .json({ message: "Magic Link sent successfully", success: true, sendStatus: verificaton });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'internal server error' })
+    return res.status(500).json({ message: 'internal server error' })
   }
 }
 
@@ -144,17 +144,17 @@ const verifyMagicLink = async (req, res, result) => {
       }
     });
     if (!user) {
-      res.json({ message: "User doesn't exist" });
+     return res.status(404).json({ message: "User doesn't exist" });
     }
     const token = await createJWT(user.id);
     res.cookie("token", token, {
       withCredentials: true,
       httpOnly: false,
     });
-    res.status(201).json({ message: "User logged in successfully", success: true });
+    return res.status(200).json({ message: "User logged in successfully", success: true });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'internal server error' })
+    return res.status(500).json({ message: 'internal server error' })
   }
 }
 // const updateOneuser = () => {
