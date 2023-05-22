@@ -1,8 +1,72 @@
+"use client"
 import React from 'react'
+import { useState } from 'react';
 import { ArrowRight } from 'lucide-react'
+import axios from 'axios';
 
 export default function SignIn() {
-    
+    const [formData, setFormData] = useState({
+        email: '',
+        password: ''
+    });
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        try {
+            // const res = await fetch('http://localhost:5000/api/user/login', {
+            //     method: 'POST',
+            //     headers: {
+            //         'Content-Type': 'application/json'
+            //     },
+            //     body: JSON.stringify(formData)
+            // });
+            const res = await axios.post('http://localhost:5000/api/user/login',formData)
+            if (res.ok) {
+                // Handle successful signup
+                console.log('Signup successful', res);
+            } else {
+                // Handle signup failure
+                console.log('Signup failed', res);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    };
+
+    const handleMagic = async (e) => {
+        e.preventDefault();
+
+        try {
+            const res = await fetch('http://localhost:5000/api/user/magic-login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({email:formData.email})
+            });
+
+            if (res.ok) {
+                // Handle successful signup
+                console.log('Signup successful', res);
+            } else {
+                // Handle signup failure
+                console.log('Signup failed', res);
+                console.log("formated email", JSON.stringify({email:formData.email}))
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    };
+
+    const handleChange = (e) => {
+        e.preventDefault();
+        setFormData((prevData) => ({
+            ...prevData,
+            [e.target.id]: e.target.value
+        }));
+        console.log(e.target.id, " ", e.target.value);
+    };
     return (
         <section className="rounded-md bg-black/70 p-2">
             <div className="flex items-center justify-center bg-white px-4 py-10 sm:px-6 sm:py-16 lg:px-8">
@@ -32,7 +96,7 @@ export default function SignIn() {
                             Create a free account
                         </a>
                     </p>
-                    <form action="#" method="POST" className="mt-8">
+                    <form action="#" method="POST" onSubmit={async (e) => handleSubmit(e)} className="mt-8">
                         <div className="space-y-5">
                             <div>
                                 <label htmlFor="" className="text-base font-medium text-gray-900">
@@ -43,7 +107,9 @@ export default function SignIn() {
                                     <input
                                         className="flex h-10 w-full rounded-md border border-gray-300 bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
                                         type="email"
+                                        id='email'
                                         placeholder="richard.hendricks@piedpiper.com"
+                                        onChange={(e) => { handleChange(e) }}
                                     ></input>
                                 </div>
                             </div>
@@ -53,7 +119,7 @@ export default function SignIn() {
                                         {' '}
                                         Password{' '}
                                     </label>
-                                    <p href="#" title="" className="text-sm font-semibold text-black hover:underline">
+                                    <p onClick={async(e) => { handleMagic(e) }} title="" className="text-sm font-semibold text-black hover:underline">
                                         {' '}
                                         Try 😎 Passwordless Login ? {' '}
                                     </p>
@@ -62,15 +128,17 @@ export default function SignIn() {
                                     <input
                                         className="flex h-10 w-full rounded-md border border-gray-300 bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
                                         type="password"
+                                        id='password'
                                         placeholder="************"
+                                        onChange={async(e) => { handleChange(e) }}
                                     ></input>
                                 </div>
                             </div>
                             <div>
                                 <button
-                                    type="button"
+                                    type="submit"
                                     className="inline-flex w-full items-center justify-center rounded-md bg-black px-3.5 py-2.5 font-semibold leading-7 text-white hover:bg-black/80"
-                                    // onClick={handleSubmit}
+                                // onClick={handleSubmit}
                                 >
                                     Get started <ArrowRight className="ml-2" size={16} />
                                 </button>

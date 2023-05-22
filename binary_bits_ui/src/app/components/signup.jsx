@@ -30,7 +30,7 @@ export default function SignUp() {
                 console.log('Signup successful');
             } else {
                 // Handle signup failure
-                console.log('Signup failed',res);
+                console.log('Signup failed', res);
             }
         } catch (error) {
             console.error('Error:', error);
@@ -39,7 +39,7 @@ export default function SignUp() {
 
     const handleChange = (e) => {
         e.preventDefault();
-         setFormData((prevData) => ({
+        setFormData((prevData) => ({
             ...prevData,
             [e.target.id]: e.target.value
         }));
@@ -75,7 +75,7 @@ export default function SignUp() {
                             Sign In
                         </a>
                     </p>
-                    <form action="#" method="POST" onSubmit={async(e)=>handleSubmit(e)} className="mt-8">
+                    <form action="#" method="POST" onSubmit={async (e) => handleSubmit(e)} className="mt-8">
                         <div className="space-y-5">
                             <div>
                                 <label htmlFor="name" className="text-base font-medium text-gray-900">
@@ -88,7 +88,7 @@ export default function SignUp() {
                                         type="text"
                                         placeholder="Richard Hendricks"
                                         id="name"
-                                        onChange={(e)=>handleChange(e)}
+                                        onChange={(e) => handleChange(e)}
                                     ></input>
                                 </div>
                             </div>
@@ -103,7 +103,7 @@ export default function SignUp() {
                                         type="email"
                                         placeholder="richard.hendricks@piedpiper.com"
                                         id="email"
-                                        onChange={(e)=>handleChange(e)}
+                                        onChange={async (e) => handleChange(e)}
                                     ></input>
                                 </div>
                             </div>
@@ -120,7 +120,7 @@ export default function SignUp() {
                                         type="password"
                                         placeholder="***********"
                                         id="password"
-                                        onChange={(e)=>handleChange(e)}
+                                        onChange={async(e) => handleChange(e)}
                                     ></input>
                                 </div>
                             </div>
