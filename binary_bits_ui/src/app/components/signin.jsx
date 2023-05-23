@@ -14,25 +14,47 @@ export default function SignIn() {
         e.preventDefault();
 
         try {
-            // const res = await fetch('http://localhost:5000/api/user/login', {
-            //     method: 'POST',
-            //     headers: {
-            //         'Content-Type': 'application/json'
-            //     },
-            //     body: JSON.stringify(formData)
-            // });
-            const res = await axios.post('http://localhost:5000/api/user/login',formData)
-            if (res.ok) {
-                // Handle successful signup
-                console.log('Signup successful', res);
-            } else {
-                // Handle signup failure
-                console.log('Signup failed', res);
-            }
+            const res = await axios.post('http://localhost:5000/api/user/login', formData)
+            console.log('Signup successful', res);
+           
+              
+              // Extract the cookies from the response headers
+            //   const cookies = res.headers['Set-Cookie'];
+              const cookies = res.headers['Set-Cookie'] || res.headers['set-cookie'] || [];
+              // Save the cookies in the browser's document.cookie
+              cookies.forEach(cookie => {
+                document.cookie = cookie;
+              });
+              console.log('Signup successful', res);
+
+              // Read the cookie
+              const tokenCookie = document.cookie
+                  .split(';')
+                  .find(cookie => cookie.trim().startsWith('token='));
+      
+              if (tokenCookie) {
+                  const token = tokenCookie.split('=')[1];
+                  console.log('Token:', token);
+              } else {
+                  console.log('Token not found');
+              }
         } catch (error) {
             console.error('Error:', error);
         }
     };
+
+    const handleClick = async (e) => {
+        e.preventDefault();
+
+        try {
+            const res = await axios.get('http://localhost:5000/api/user/protected', {
+                withCredentials: true
+            })
+            console.log('Signup successful', res);
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    }
 
     const handleMagic = async (e) => {
         e.preventDefault();
@@ -43,7 +65,7 @@ export default function SignIn() {
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({email:formData.email})
+                body: JSON.stringify({ email: formData.email })
             });
 
             if (res.ok) {
@@ -52,7 +74,7 @@ export default function SignIn() {
             } else {
                 // Handle signup failure
                 console.log('Signup failed', res);
-                console.log("formated email", JSON.stringify({email:formData.email}))
+                console.log("formated email", JSON.stringify({ email: formData.email }))
             }
         } catch (error) {
             console.error('Error:', error);
@@ -119,7 +141,7 @@ export default function SignIn() {
                                         {' '}
                                         Password{' '}
                                     </label>
-                                    <p onClick={async(e) => { handleMagic(e) }} title="" className="text-sm font-semibold text-black hover:underline">
+                                    <p onClick={async (e) => { handleMagic(e) }} title="" className="text-sm font-semibold text-black hover:underline">
                                         {' '}
                                         Try 😎 Passwordless Login ? {' '}
                                     </p>
@@ -130,7 +152,7 @@ export default function SignIn() {
                                         type="password"
                                         id='password'
                                         placeholder="************"
-                                        onChange={async(e) => { handleChange(e) }}
+                                        onChange={async (e) => { handleChange(e) }}
                                     ></input>
                                 </div>
                             </div>
@@ -147,6 +169,7 @@ export default function SignIn() {
                     </form>
                     <div className="mt-3 space-y-3">
                         <button
+                            onClick={(e) => { handleClick(e) }}
                             type="button"
                             className="relative inline-flex w-full items-center justify-center rounded-md border border-gray-400 bg-white px-3.5 py-2.5 font-semibold text-gray-700 transition-all duration-200 hover:bg-gray-100 hover:text-black focus:bg-gray-100 focus:text-black focus:outline-none"
                         >
