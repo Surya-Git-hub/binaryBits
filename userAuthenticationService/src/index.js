@@ -9,11 +9,11 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 app.use(
     cors(
-    //     {
-    //     origin: ["http://localhost:5000"],
-    //     methods: ["GET", "POST", "PUT", "DELETE"],
-    //     credentials: true,
-    // }
+        {
+        origin: ["http://localhost:3000"],
+        methods: ["GET", "POST", "PUT", "DELETE"],
+        credentials: true,
+    }
     )
 );
 app.use(cookieParser());

@@ -7,12 +7,12 @@ const isAuthenticated = async (req, res, next) => {
     try {
         const token = req.cookies.token
         if (!token) {
-            return res.json({ status: false })
+            return res.status(401).json({ status: false })
         }
         jwt.verify(token, process.env.TOKEN_KEY, async (err, data) => {
             console.log(data);
             if (err) {
-                res.json({ status: false })
+                res.status(401).json({ status: false })
             } else {
                 const user = await prisma.user.findUnique({
                     where: {
@@ -30,7 +30,7 @@ const isAuthenticated = async (req, res, next) => {
                     // res.status(200).json({data:"ok"});
                     next()
                 }
-                else { res.json({ status: false }) }
+                else { res.status(401).json({ status: false,message:"authentication failed" }) }
             }
         })
     } catch (error) {
