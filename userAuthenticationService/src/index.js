@@ -7,15 +7,9 @@ require("dotenv").config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-app.use(
-    cors(
-        {
-        origin: ["http://localhost:3000"],
-        methods: ["GET", "POST", "PUT", "DELETE"],
-        credentials: true,
-    }
-    )
-);
+app.use(cors());
+// app.use(cors());
+app.enable('trust proxy');
 app.use(cookieParser());
 app.use(bodyParser.json());
 

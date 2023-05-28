@@ -3,6 +3,8 @@ import React from 'react'
 import { useState } from 'react';
 import { ArrowRight } from 'lucide-react'
 import axios from 'axios';
+// import { setCookie } from "next/router";
+// import { cookies } from 'next/headers';
 
 export default function SignIn() {
     const [formData, setFormData] = useState({
@@ -14,30 +16,43 @@ export default function SignIn() {
         e.preventDefault();
 
         try {
-            const res = await axios.post('http://localhost:5000/api/user/login', formData)
-            console.log('Signup successful', res);
-           
-              
-              // Extract the cookies from the response headers
-            //   const cookies = res.headers['Set-Cookie'];
-              const cookies = res.headers['Set-Cookie'] || res.headers['set-cookie'] || [];
-              // Save the cookies in the browser's document.cookie
-              cookies.forEach(cookie => {
-                document.cookie = cookie;
-              });
-              console.log('Signup successful', res);
+            const api = axios.create({
+                // Set the base URL for your API requests
+                baseURL: 'http://localhost:5000',
 
-              // Read the cookie
-              const tokenCookie = document.cookie
-                  .split(';')
-                  .find(cookie => cookie.trim().startsWith('token='));
-      
-              if (tokenCookie) {
-                  const token = tokenCookie.split('=')[1];
-                  console.log('Token:', token);
-              } else {
-                  console.log('Token not found');
-              }
+                // Set the default headers to skip the preflight request
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': 'http://localhost:3000',
+                    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE',
+                    'Access-Control-Allow-Headers': 'Content-Type',
+                    'Access-Control-Allow-Credentials': true,
+                },
+            });
+            const res = await api.post('http://localhost:5000/api/user/login', formData
+            )
+            // cookies().set('token',res.data.token);
+            console.log("Response",res);
+            const cookie = `token=${encodeURIComponent(res.data.token)}`;
+            document.cookie = cookie;
+            console.log('Cookies:', cookie);
+            // Save the cookies in the browser's document.cookie
+            //   cookies.forEach(cookie => {
+            //     document.cookie = cookie;
+            //   });
+
+
+            // Read the cookie
+            const tokenCookie = document.cookie
+                .split(';')
+                .find(cookie => cookie.trim().startsWith('token='));
+
+            if (tokenCookie) {
+                const token = tokenCookie.split('=')[1];
+                console.log('Token:', token);
+            } else {
+                console.log('Token not found');
+            }
         } catch (error) {
             console.error('Error:', error);
         }

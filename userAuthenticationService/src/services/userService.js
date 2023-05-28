@@ -78,7 +78,7 @@ const userLogin = async (req, res) => {
       httpOnly: false,
       sameSite: 'none',
     });
-    return res.status(200).json({ message: "User logged in successfully", success: true });
+    return res.status(200).json({ message: "User logged in successfully", success: true, token });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: 'internal server error' })
