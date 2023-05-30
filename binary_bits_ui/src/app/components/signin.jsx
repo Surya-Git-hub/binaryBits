@@ -16,7 +16,7 @@ export default function SignIn() {
         e.preventDefault();
 
         try {
-            const api = axios.create({
+            const api = await axios.create({
                 // Set the base URL for your API requests
                 baseURL: 'http://localhost:5000',
 
@@ -36,6 +36,9 @@ export default function SignIn() {
             const cookie = `token=${encodeURIComponent(res.data.token)}`;
             document.cookie = cookie;
             console.log('Cookies:', cookie);
+            let protetedRoute = await axios.get('http://localhost:5000/api/protected',{ withCredentials: true });
+            console.log("PR>>",protetedRoute);
+
             // Save the cookies in the browser's document.cookie
             //   cookies.forEach(cookie => {
             //     document.cookie = cookie;
