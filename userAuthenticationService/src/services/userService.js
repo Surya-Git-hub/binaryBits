@@ -6,11 +6,11 @@ const { checkDuplicateEmail } = require("../utils/checkDuplicateEmail");
 const { comparePasswords } = require("../utils/comparePasswords");
 const { createJWT } = require("../utils/createJWT")
 const { generateVerificationLink } = require("../utils/generateVerificationLink");
-const { verifyMail,sendMagicLink } = require("../utils/verifyMail");
+const { verifyMail, sendMagicLink } = require("../utils/verifyMail");
 
 const getAllUsers = async () => {
   try {
-    const allusers = await prisma.user.findMany();
+    const allusers = await prisma.User.findMany();
     console.log(allusers);
     return allusers;
   } catch (error) {
@@ -40,7 +40,7 @@ const createNewUser = async (req, res) => {
       name, pass: hashedPassword, email,
       emailVerified: false,
     };
-    const createdUser = await prisma.user.create({ data: userToInsert });
+    const createdUser = await prisma.User.create({ data: userToInsert });
     let vlink = await generateVerificationLink(email, createdUser.id);
     let verificaton = await verifyMail(email, name, vlink);
     const token = await createJWT(createdUser.id);
@@ -61,7 +61,7 @@ const createNewUser = async (req, res) => {
 const userLogin = async (req, res) => {
   try {
     const { email, password } = req.body;
-    const user = await prisma.user.findUnique({
+    const user = await prisma.User.findUnique({
       where: {
         email: email,
       },
@@ -70,7 +70,7 @@ const userLogin = async (req, res) => {
       return res.status(404).json({ message: "User doesn't exist" });
     }
     if (!comparePasswords(password, user.pass)) {
-     return res.status(401).json({ message: 'Incorrect password or email' })
+      return res.status(401).json({ message: 'Incorrect password or email' })
     }
     const token = await createJWT(user.id);
     res.cookie("token", token, {
@@ -78,7 +78,11 @@ const userLogin = async (req, res) => {
       httpOnly: false,
       sameSite: 'none',
     });
-    return res.status(200).json({ message: "User logged in successfully", success: true, token });
+    if (user.profileComplete) {
+      return res.status(200).json({ message: "User logged in successfully", success: true, token, userData: { user: user.name, email: user.email, profileComplete: false } });
+    } else {
+      return res.status(200).json({ message: "User logged in successfully", success: true, token, userData: { user: user.name, email: user.email, profileComplete: false } });
+    }
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: 'internal server error' })
@@ -87,7 +91,7 @@ const userLogin = async (req, res) => {
 
 const verifyEmail = async (req, res, result) => {
   try {
-    const updatedUser = await prisma.user.update({
+    const updatedUser = await prisma.User.update({
       where: { id: result.id },
       data: {
         emailVerified: true,
@@ -117,7 +121,7 @@ const reVerifyEmail = async (req, res) => {
 const magicLogin = async (req, res) => {
   try {
     let { email } = req.body;
-    const user = await prisma.user.findUnique({
+    const user = await prisma.User.findUnique({
       where: {
         email: email,
       },
@@ -139,13 +143,13 @@ const magicLogin = async (req, res) => {
 
 const verifyMagicLink = async (req, res, result) => {
   try {
-    const user = await prisma.user.findUnique({
+    const user = await prisma.User.findUnique({
       where: {
         id: result.id
       }
     });
     if (!user) {
-     return res.status(404).json({ message: "User doesn't exist" });
+      return res.status(404).json({ message: "User doesn't exist" });
     }
     const token = await createJWT(user.id);
     res.cookie("token", token, {

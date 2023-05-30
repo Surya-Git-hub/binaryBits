@@ -1,8 +1,10 @@
 'use client'
 
-import React from 'react'
 import { Menu, X, ChevronDown, ChevronRight, VenetianMask } from 'lucide-react'
 import { Link } from 'next/link';
+import { useContext, useState } from 'react';
+import { useRouter } from 'next/router';
+import { user_data } from '../context';
 
 const menuItems = [
     {
@@ -20,7 +22,8 @@ const menuItems = [
 ]
 
 export default function Navbar() {
-    const [isMenuOpen, setIsMenuOpen] = React.useState(false)
+    const [isMenuOpen, setIsMenuOpen] = useState(false)
+    const { userName, setUserName, userEmail, setUserEmail } = useContext(user_data);
 
     const toggleMenu = () => {
         setIsMenuOpen(!isMenuOpen)
@@ -85,7 +88,11 @@ export default function Navbar() {
                 <div className="ml-2 mt-2 hidden lg:block">
                     <span className="relative inline-block">
                         <a href="/sign-in">
-                            <VenetianMask className="h-10 w-10 px-2 bg-gray-600 rounded-full" />
+                            {userName ? <img
+                                className="h-10 w-10 rounded-full"
+                                src="https://overreacted.io/static/profile-pic-c715447ce38098828758e525a1128b87.jpg"
+                                alt="Dan_Abromov"
+                            /> : <VenetianMask className="h-10 w-10 px-2 bg-gray-600 rounded-full" alt="anonymous" />}
                         </a>
                         <span className="absolute bottom-0 right-0 block h-2.5 w-2.5 rounded-full bg-green-600 ring-2 ring-white"></span>
                     </span>
@@ -157,7 +164,12 @@ export default function Navbar() {
                                 </div> */}
                                 <div className="ml-3 mt-4 flex items-center space-x-2">
                                     <a href="/sign-in">
-                                        <VenetianMask className='inline-block h-10 w-10 rounded-full px-2 bg-gray-600 rounded-full' />
+                                        {userName ? <img
+                                            className="h-10 w-10 rounded-full"
+                                            src="https://overreacted.io/static/profile-pic-c715447ce38098828758e525a1128b87.jpg"
+                                            alt="Dan_Abromov"
+                                        /> : <VenetianMask className="h-10 w-10 px-2 bg-gray-600 rounded-full" alt="anonymous" />}
+
                                     </a>
                                     <span className="flex flex-col">
                                         <span className="text-sm font-medium text-gray-900">Richard Hendricks</span>

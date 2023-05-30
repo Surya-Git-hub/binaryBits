@@ -2,7 +2,7 @@ const { Prisma, PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
 async function checkDuplicateEmail(email) {
-    const user = await prisma.user.findUnique({
+    const user = await prisma.User.findUnique({
       where: {
         email: email,
       },

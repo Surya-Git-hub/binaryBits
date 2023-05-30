@@ -3,10 +3,13 @@ import React from 'react'
 import { useState } from 'react';
 import { ArrowRight } from 'lucide-react'
 import axios from 'axios';
-// import { setCookie } from "next/router";
-// import { cookies } from 'next/headers';
+import { redirect } from 'next/router';
+import { useContext } from 'react';
+import { useRouter } from 'next/router';
+import { user_data } from '../context';
 
 export default function SignIn() {
+    const { setUserName,setUserEmail } = useContext(user_data);
     const [formData, setFormData] = useState({
         email: '',
         password: ''
@@ -31,31 +34,13 @@ export default function SignIn() {
             });
             const res = await api.post('http://localhost:5000/api/user/login', formData
             )
-            // cookies().set('token',res.data.token);
-            console.log("Response",res);
+
             const cookie = `token=${encodeURIComponent(res.data.token)}`;
             document.cookie = cookie;
-            console.log('Cookies:', cookie);
-            let protetedRoute = await axios.get('http://localhost:5000/api/protected',{ withCredentials: true });
-            console.log("PR>>",protetedRoute);
+            setUserName(res.data.userData.user);
+            setUserEmail(res.data.userData.email);
+            redirect('/');
 
-            // Save the cookies in the browser's document.cookie
-            //   cookies.forEach(cookie => {
-            //     document.cookie = cookie;
-            //   });
-
-
-            // Read the cookie
-            const tokenCookie = document.cookie
-                .split(';')
-                .find(cookie => cookie.trim().startsWith('token='));
-
-            if (tokenCookie) {
-                const token = tokenCookie.split('=')[1];
-                console.log('Token:', token);
-            } else {
-                console.log('Token not found');
-            }
         } catch (error) {
             console.error('Error:', error);
         }

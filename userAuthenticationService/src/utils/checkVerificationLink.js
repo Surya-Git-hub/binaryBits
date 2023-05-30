@@ -9,7 +9,7 @@ const checkVerificationLink = async (token) => { ///this can be done using jwt e
     const cryptr = new Cryptr(secret);
     const decryptedToken = cryptr.decrypt(token);
     let [email, userId] = decryptedToken.split(" ");
-    const user = await prisma.user.findUnique({
+    const user = await prisma.User.findUnique({
         where: {
             email: email,
         },

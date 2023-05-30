@@ -14,7 +14,7 @@ const isAuthenticated = async (req, res, next) => {
             if (err) {
                 res.status(401).json({ status: false })
             } else {
-                const user = await prisma.user.findUnique({
+                const user = await prisma.User.findUnique({
                     where: {
                         id: data.id
                     }

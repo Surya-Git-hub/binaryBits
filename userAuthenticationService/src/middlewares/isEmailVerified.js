@@ -8,7 +8,7 @@ const isEmailVerified = async (req, res, next) => {
         if (!id) {
             res.json({ status: false, message: "not valid user" })
         }
-        const user = await prisma.user.findUnique({
+        const user = await prisma.User.findUnique({
             where: {
                 id: id,
             }
