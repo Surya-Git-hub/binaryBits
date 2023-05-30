@@ -3,6 +3,8 @@
 import React from 'react'
 import { useState } from 'react';
 import { ArrowRight } from 'lucide-react'
+import axios from 'axios';
+import { useRouter } from 'next/navigation';
 
 export default function SignUp() {
 
@@ -12,22 +14,32 @@ export default function SignUp() {
         email: '',
         password: ''
     });
+    const router = useRouter();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
         try {
-            const res = await fetch('http://localhost:5000/api/user/sign-up', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(formData)
-            });
+            const api = await axios.create({
+                // Set the base URL for your API requests
+                baseURL: 'http://localhost:5000',
 
-            if (res.ok) {
+                // Set the default headers to skip the preflight request
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': 'http://localhost:3000',
+                    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE',
+                    'Access-Control-Allow-Headers': 'Content-Type',
+                    'Access-Control-Allow-Credentials': true,
+                },
+            });
+            const res = await api.post('http://localhost:5000/api/user/sign-up', formData);
+
+            if (res.status == 201) {
                 // Handle successful signup
-                console.log('Signup successful');
+                console.log('Signup successful', res);
+                router.push('/check-email')
+
             } else {
                 // Handle signup failure
                 console.log('Signup failed', res);
@@ -120,7 +132,7 @@ export default function SignUp() {
                                         type="password"
                                         placeholder="***********"
                                         id="password"
-                                        onChange={async(e) => handleChange(e)}
+                                        onChange={async (e) => handleChange(e)}
                                     ></input>
                                 </div>
                             </div>
