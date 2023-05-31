@@ -3,13 +3,13 @@ import React from 'react'
 import { useState } from 'react';
 import { ArrowRight } from 'lucide-react'
 import axios from 'axios';
-import { redirect } from 'next/router';
 import { useContext } from 'react';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import { user_data } from '../context';
 
 export default function SignIn() {
     const { setUserName,setUserEmail } = useContext(user_data);
+    const router = useRouter();
     const [formData, setFormData] = useState({
         email: '',
         password: ''
@@ -39,7 +39,12 @@ export default function SignIn() {
             document.cookie = cookie;
             setUserName(res.data.userData.user);
             setUserEmail(res.data.userData.email);
-            redirect('/');
+            if(res.data.userData.profileComplete){
+                router.push('/')
+            }else{
+                router.push('/create-profile')
+
+            }
 
         } catch (error) {
             console.error('Error:', error);

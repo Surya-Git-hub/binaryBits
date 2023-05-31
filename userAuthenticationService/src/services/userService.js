@@ -78,8 +78,8 @@ const userLogin = async (req, res) => {
       httpOnly: false,
       sameSite: 'none',
     });
-    if (user.profileComplete) {
-      return res.status(200).json({ message: "User logged in successfully", success: true, token, userData: { user: user.name, email: user.email, profileComplete: false } });
+    if (user.profile) {
+      return res.status(200).json({ message: "User logged in successfully", success: true, token, userData: { user: user.name, email: user.email, profileComplete: true } });
     } else {
       return res.status(200).json({ message: "User logged in successfully", success: true, token, userData: { user: user.name, email: user.email, profileComplete: false } });
     }
