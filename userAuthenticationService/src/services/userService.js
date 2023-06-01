@@ -7,6 +7,7 @@ const { comparePasswords } = require("../utils/comparePasswords");
 const { createJWT } = require("../utils/createJWT")
 const { generateVerificationLink } = require("../utils/generateVerificationLink");
 const { verifyMail, sendMagicLink } = require("../utils/verifyMail");
+const { uploadImageToS3 } = require("../utils/awsUploadImage");
 
 const getAllUsers = async () => {
   try {
@@ -162,6 +163,29 @@ const verifyMagicLink = async (req, res, result) => {
     return res.status(500).json({ message: 'internal server error' })
   }
 }
+
+const createProfile = async (req, res) => {
+  try {
+    const { bio, profession, imageFile, id } = req.body;
+    const s3Response = await uploadImageToS3(imageFile);
+    const profileToInsert = {
+      bio, profilePhoto: s3Response.Location,
+      profession,
+      user: id
+    };
+    const createdProfile = await prisma.Profile.create({ data: profileToInsert });
+    const updatedUser = await prisma.User.update({
+      where: { id: id },
+      data: {
+        profile: createdProfile.id,
+      },
+    });
+    res.status(201).json({ savedProfile, updatedUser });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'internal server error' })
+  }
+}
 // const updateOneuser = () => {
 //   return;
 // };
@@ -178,7 +202,8 @@ module.exports = {
   verifyEmail,
   reVerifyEmail,
   magicLogin,
-  verifyMagicLink
+  verifyMagicLink,
+  createProfile,
   // updateOneuser,
   // deleteOneuser,
 };

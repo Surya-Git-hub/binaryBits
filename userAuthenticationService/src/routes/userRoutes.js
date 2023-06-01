@@ -19,6 +19,7 @@ router.get("/protected", isAuthenticated, isEmailVerified, userController.getAll
 router.post("/sign-up", userController.createNewUser);
 
 router.post("/login", userController.userLogin);
+router.post("/create-profile",isAuthenticated,isEmailVerified,userController.createProfile)
 
 // router.post("/sign-in", userController.createNewUser);
 

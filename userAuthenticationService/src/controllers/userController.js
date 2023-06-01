@@ -1,11 +1,11 @@
 const userService = require("../services/userService");
 const { checkVerificationLink } = require("../utils/checkVerificationLink");
-const {verifyJWT} = require("../utils/verifyJWT");
+const { verifyJWT } = require("../utils/verifyJWT");
 
 const getAllUsers = async (req, res) => {
     try {
         const allusers = await userService.getAllUsers();
-        return  res.status(200).json({ status: "OK", data: allusers });
+        return res.status(200).json({ status: "OK", data: allusers });
     } catch (error) {
         console.log("error", error);
         return res.status(500).json({ error: error });
@@ -72,7 +72,7 @@ const verifyEmail = async (req, res) => {
         }
         const result = await checkVerificationLink(token);
         if (!result.match) {
-            return  res.status(400).json({ error: 'token not matched' });
+            return res.status(400).json({ error: 'token not matched' });
         }
         await userService.verifyEmail(req, res, result);
     } catch (error) {
@@ -81,16 +81,16 @@ const verifyEmail = async (req, res) => {
     }
 }
 
-const reVerifyEmail = async(req,res)=>{
+const reVerifyEmail = async (req, res) => {
     try {
-        await userService.reVerifyEmail(req,res);
+        await userService.reVerifyEmail(req, res);
     } catch (error) {
         console.log(error);
         return res.status(500).json({ error: error });
-        
+
     }
 }
-const magicLogin = async(req,res)=>{
+const magicLogin = async (req, res) => {
     try {
         const { email } = req.body;
         if (!email) {
@@ -100,31 +100,63 @@ const magicLogin = async(req,res)=>{
         if (!emailRegex.test(email)) {
             return res.status(400).json({ error: 'Invalid email' });
         }
-        await userService.magicLogin(req,res);
+        await userService.magicLogin(req, res);
     } catch (error) {
         console.log(error);
         return res.status(500).json({ error: error });
     }
 }
-const verifyMagicLink = async(req,res)=>{
+const verifyMagicLink = async (req, res) => {
     try {
         const token = req.query.token;
         if (!token) {
             return res.status(400).json({ error: 'token is invalid or not found' });
         }
         const result = await verifyJWT(token);
-        console.log("result >>",result);
+        console.log("result >>", result);
         if (!result) {
             return res.status(400).json({ error: 'token verification failed' });
         }
-        await userService.verifyMagicLink(req,res,result);
+        await userService.verifyMagicLink(req, res, result);
 
     } catch (error) {
         console.log(error);
-        return res.status(500).json({ error: error }); 
+        return res.status(500).json({ error: error });
     }
 }
+const createProfile = async (req, res) => {
+    try {
+        const { profession, bio, imageFile } = req.body;
+        if (!profession && !bio && !imageFile) {
+            return res.status(200).json({ status: 'Nothing saved because nothing to save' });
+        }
+        const professionRegex = /^[a-zA-Z\s]+$/;
+        const bioRegex = /^.{0,150}$/;
+        if (!professionRegex.test(profession) && profession !== "") {
+            return res.status(400).json({ error: 'profession is invalid' });
+        }
+        if (!bioRegex.test(bio) && bio !== "") {
+            return res.status(400).json({ error: 'bio is invalid' });
+        }
+        if (imageFile) {
+            const allowedExtensions = ['.jpg', '.jpeg', '.png', '.svg', '.img'];
+            const fileExtension = imageFile.originalname.split('.').pop().toLowerCase();
+            if (!allowedExtensions.includes(fileExtension)) {
+                return res.status(400).json({ error: 'Invalid imageFile extension' });
+            }
+            const maxSize = 10 * 1024 * 1024; // 10MB
+            if (imageFile.size > maxSize) {
+                return res.status(400).json({ error: 'File size exceeds the limit' });
+            }
+        }
 
+        await userService.createProfile(req, res);
+
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ error: error });
+    }
+}
 // const updateOneuser = (req, res) => {
 //     const updateduser = userService.updateOneuser();
 //     res.send("Update an existing user");
@@ -143,7 +175,8 @@ module.exports = {
     verifyEmail,
     reVerifyEmail,
     magicLogin,
-    verifyMagicLink
+    verifyMagicLink,
+    createProfile,
     // updateOneuser,
     // deleteOneuser,
 };
