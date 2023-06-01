@@ -21,11 +21,14 @@ export default function CreateProfile() {
             ...prevData,
             [e.target.id]: e.target.value
         }));
-        console.log(e.target.id, " ", e.target.value);
     };
 
     const handleClick = async (e) => {
         e.preventDefault();
+        const fData = new FormData();
+        fData.append("profession", formData.profession);
+        fData.append("bio", formData.bio);
+        fData.append("imageFile", file);
         try {
             const api = await axios.create({
                 // Set the base URL for your API requests
@@ -33,25 +36,20 @@ export default function CreateProfile() {
 
                 // Set the default headers to skip the preflight request
                 headers: {
-                    'Content-Type': 'application/json',
+                    'Content-Type': 'multipart/form-data',
                     'Access-Control-Allow-Origin': 'http://localhost:3000',
                     'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE',
                     'Access-Control-Allow-Headers': 'Content-Type',
                     'Access-Control-Allow-Credentials': true,
                 },
             });
-            const res = await api.post('http://localhost:5000/api/user/login', { ...formData, pic: fileDataURL }
-            )
+            const res = await api.post('http://localhost:5000/api/user/create-profile', fData)
 
-            const cookie = `token=${encodeURIComponent(res.data.token)}`;
-            document.cookie = cookie;
-            setUserName(res.data.userData.user);
-            setUserEmail(res.data.userData.email);
-            if (res.data.userData.profileComplete) {
+            if (res.status == 201) {
                 router.push('/')
             } else {
-                router.push('/create-profile')
-
+                router.push('/create-profile');
+                console.log("Something went wrong");
             }
 
         } catch (error) {
