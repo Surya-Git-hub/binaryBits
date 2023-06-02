@@ -32,6 +32,7 @@ export default function CreateProfile() {
         fData.append("bio", formData.bio);
         fData.append("imageFile", file);
         try {
+            const token = document.cookie.replace(/(?:(?:^|.*;\s*)token\s*=\s*([^;]*).*$)|^.*$/, '$1');
             const api = await axios.create({
                 // Set the base URL for your API requests
                 baseURL: 'http://localhost:5000',
@@ -44,6 +45,7 @@ export default function CreateProfile() {
                     'Access-Control-Allow-Headers': 'Content-Type',
                     'Access-Control-Allow-Credentials': true,
                 },
+                withCredentials:true,
             });
             const res = await api.post('http://localhost:5000/api/user/create-profile', fData)
 

@@ -168,9 +168,9 @@ const verifyMagicLink = async (req, res, result) => {
 const createProfile = async (req, res) => {
   try {
     const { bio, profession, id } = req.body;
-    const imageFile = req.files.file;
+    const imageFile = req.files.imageFile.data;
     console.log("image >>",imageFile)
-    console.log("req",req);
+    // console.log("req",req);
     const generateFileName = (bytes = 32) => crypto.randomBytes(bytes).toString('hex')
     const s3Response = await uploadImageToS3(imageFile, generateFileName);
     const profileToInsert = {
