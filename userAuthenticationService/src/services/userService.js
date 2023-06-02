@@ -8,6 +8,7 @@ const { createJWT } = require("../utils/createJWT")
 const { generateVerificationLink } = require("../utils/generateVerificationLink");
 const { verifyMail, sendMagicLink } = require("../utils/verifyMail");
 const { uploadImageToS3 } = require("../utils/awsUploadImage");
+const crypto = require('crypto');
 
 const getAllUsers = async () => {
   try {
@@ -166,10 +167,14 @@ const verifyMagicLink = async (req, res, result) => {
 
 const createProfile = async (req, res) => {
   try {
-    const { bio, profession, imageFile, id } = req.body;
-    const s3Response = await uploadImageToS3(imageFile);
+    const { bio, profession, id } = req.body;
+    const imageFile = req.files.file;
+    console.log("image >>",imageFile)
+    console.log("req",req);
+    const generateFileName = (bytes = 32) => crypto.randomBytes(bytes).toString('hex')
+    const s3Response = await uploadImageToS3(imageFile, generateFileName);
     const profileToInsert = {
-      bio, profilePhoto: s3Response.Location,
+      bio, profilePhoto: generateFileName,
       profession,
       user: id
     };
