@@ -78,8 +78,10 @@ const userLogin = async (req, res) => {
     res.cookie("token", token, {
       withCredentials: true,
       httpOnly: false,
-      sameSite: 'none',
+      sameSite: 'lax',
+      // path: '/refresh_token',
     });
+    // res.cookies.set("set",true);
     if (user.profile) {
       return res.status(200).json({ message: "User logged in successfully", success: true, token, userData: { user: user.name, email: user.email, profileComplete: true } });
     } else {

@@ -8,7 +8,7 @@ require("dotenv").config();
 
 const app = express();
 app.use(fileUpload());
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 5000;
 app.use(cors({ credentials: true, origin: "http://localhost:3000" }));
 app.enable('trust proxy');
 app.use(cookieParser());
