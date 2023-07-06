@@ -122,6 +122,44 @@ const updateOneUser = async (req, res) => {
 
 const updateSomeUsers = async (req, res) => {
   try {
+    const { name, email, ids,level } = req.body;
+    if (ids.length <= 0) {
+      return res.status(400).json({ error: "ids are required in body" });
+    }
+    let updatedUser;
+    if (level == 2) {
+      updatedUser = await prisma.user.updateMany({
+        where: {
+          id: { in: userIds },
+        },
+        data: {
+          name: name,
+          email: email,
+          emailVerified: false,
+        },
+      });
+    } else if (level == 1) {
+      updatedUser = await prisma.user.updateMany({
+        where: {
+          id: { in: userIds },
+        },
+        data: {
+          email: email,
+          emailVerified: false,
+        },
+      });
+    } else if (level == 0) {
+      updatedUser = await prisma.user.updateMany({
+        where: {
+          id: { in: userIds },
+        },
+        data: {
+          name: name,
+        },
+      });
+    } else {
+      return res.status(400).json({ error: "invalid update level" });
+    }
   } catch (error) {
     console.log(error);
     return res.status(500).json({ message: "internal server error" });
@@ -130,6 +168,32 @@ const updateSomeUsers = async (req, res) => {
 
 const updateAllUsers = async (req, res) => {
   try {
+    const { name, email,level } = req.body;
+    let updatedUser;
+    if (level == 2) {
+      updatedUser = await prisma.user.updateMany({
+        data: {
+          name: name,
+          email: email,
+          emailVerified: false,
+        },
+      });
+    } else if (level == 1) {
+      updatedUser = await prisma.user.updateMany({
+        data: {
+          email: email,
+          emailVerified: false,
+        },
+      });
+    } else if (level == 0) {
+      updatedUser = await prisma.user.updateMany({
+        data: {
+          name: name,
+        },
+      });
+    } else {
+      return res.status(400).json({ error: "invalid update level" });
+    }
   } catch (error) {
     console.log(error);
     return res.status(500).json({ message: "internal server error" });
