@@ -52,6 +52,22 @@ const getOneUser = async (req, res) => {
 
 const getSomeUsers = async (req, res) => {
   try {
+    const ids = req.query?.userIds;
+    const userIds = ids.split(",");
+    if (userIds.length <= 0) {
+      return res.status(400).json({ error: "userIds are required in query" });
+    }
+    let users = await prisma.User.findMany({
+      select: { name: true, email: true, emailVerified: true, profile: true },
+      where: {
+        id: { in: userIds },
+      },
+    });
+    res.status(200).json({
+      message: "found users",
+      success: true,
+      users: [...users],
+    });
   } catch (error) {
     console.log(error);
     return res.status(500).json({ message: "internal server error" });
@@ -129,14 +145,12 @@ const createNewUser = async (req, res) => {
       withCredentials: true,
       httpOnly: false,
     });
-    return res
-      .status(201)
-      .json({
-        message: "User signed in successfully",
-        success: true,
-        createdUser,
-        emaiVerification: verificaton,
-      });
+    return res.status(201).json({
+      message: "User signed in successfully",
+      success: true,
+      createdUser,
+      emaiVerification: verificaton,
+    });
     // res.status(201).send({ status: "OK", data: createdUser });}
   } catch (error) {
     console.error(error);
@@ -167,31 +181,27 @@ const userLogin = async (req, res) => {
     });
     // res.cookies.set("set",true);
     if (user.profile) {
-      return res
-        .status(200)
-        .json({
-          message: "User logged in successfully",
-          success: true,
-          token,
-          userData: {
-            user: user.name,
-            email: user.email,
-            profileComplete: true,
-          },
-        });
+      return res.status(200).json({
+        message: "User logged in successfully",
+        success: true,
+        token,
+        userData: {
+          user: user.name,
+          email: user.email,
+          profileComplete: true,
+        },
+      });
     } else {
-      return res
-        .status(200)
-        .json({
-          message: "User logged in successfully",
-          success: true,
-          token,
-          userData: {
-            user: user.name,
-            email: user.email,
-            profileComplete: false,
-          },
-        });
+      return res.status(200).json({
+        message: "User logged in successfully",
+        success: true,
+        token,
+        userData: {
+          user: user.name,
+          email: user.email,
+          profileComplete: false,
+        },
+      });
     }
   } catch (error) {
     console.error(error);
@@ -222,13 +232,11 @@ const reVerifyEmail = async (req, res) => {
     let { email, id, name } = req.body;
     let vlink = await generateVerificationLink(email, id);
     let verificaton = await verifyMail(email, name, vlink);
-    return res
-      .status(200)
-      .json({
-        message: "email resent successfully",
-        success: true,
-        emailVerification: verificaton,
-      });
+    return res.status(200).json({
+      message: "email resent successfully",
+      success: true,
+      emailVerification: verificaton,
+    });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: "internal server error" });
@@ -248,13 +256,11 @@ const magicLogin = async (req, res) => {
     const token = await createJWT(user.id, 60 * 5);
     let vlink = `${process.env.BASE_URL}/verify-magic-link?token=${token}`;
     let verificaton = await sendMagicLink(email, user.name, vlink);
-    return res
-      .status(200)
-      .json({
-        message: "Magic Link sent successfully",
-        success: true,
-        sendStatus: verificaton,
-      });
+    return res.status(200).json({
+      message: "Magic Link sent successfully",
+      success: true,
+      sendStatus: verificaton,
+    });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: "internal server error" });
