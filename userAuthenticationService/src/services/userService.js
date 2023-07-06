@@ -306,7 +306,7 @@ const createNewUser = async (req, res) => {
       createdUser,
       emaiVerification: verificaton,
     });
-    // res.status(201).send({ status: "OK", data: createdUser });}
+    
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: "internal server error" });
@@ -332,9 +332,7 @@ const userLogin = async (req, res) => {
       withCredentials: true,
       httpOnly: false,
       sameSite: "lax",
-      // path: '/refresh_token',
     });
-    // res.cookies.set("set",true);
     if (user.profile) {
       return res.status(200).json({
         message: "User logged in successfully",
@@ -451,7 +449,6 @@ const createProfile = async (req, res) => {
     const { bio, profession, id } = req.body;
     const imageFile = req.files.imageFile.data;
     console.log("image >>", imageFile);
-    // console.log("req",req);
     const generateFileName = (bytes = 32) =>
       crypto.randomBytes(bytes).toString("hex");
     const s3Response = await uploadImageToS3(imageFile, generateFileName);

@@ -18,7 +18,8 @@ router.get(
   userController.getAllUsers
 );
 
-// router.get("/:user-id", userController.getOneUser);
+router.get("/:userId", userController.getOneUser);
+router.get("/some", userController.getSomeUsers);
 
 router.post("/sign-up", userController.createNewUser);
 
@@ -29,11 +30,12 @@ router.post(
   isEmailVerified,
   userController.createProfile
 );
+router.patch("/updateOneUser", userController.updateOneUser);
+router.patch("/updateSomeUsers", userController.updateSomeUsers);
+router.patch("/updateAllUsers", userController.updateAllUsers);
 
-// router.post("/sign-in", userController.createNewUser);
-
-// router.patch("/:user-id", userController.updateOneUser);
-
-// router.delete("/:user-id", userController.deleteOneUser);
+router.delete("/:userId", userController.deleteOneUser);
+router.delete("/some", userController.deleteSomeUsers);
+router.delete("/", userController.deleteAllUsers);
 
 module.exports = router;
