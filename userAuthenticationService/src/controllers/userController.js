@@ -16,7 +16,7 @@ const getAllUsers = async (req, res) => {
 
 const getOneUser = async (req, res) => {
   try {
-    const { id } = req.params?.userId;
+    const  id  = req.params?.userId;
     if (!hasValue(id)) {
       return res.status(400).json({ error: "userId is required in params" });
     }
@@ -29,7 +29,7 @@ const getOneUser = async (req, res) => {
 
 const getSomeUsers = async (req, res) => {
   try {
-    const { ids } = req.query?.userIds;
+    const  ids  = req.query?.userIds;
     if (!hasValue(ids)) {
       return res.status(400).json({ error: "userIds are required in query" });
     }
@@ -96,7 +96,7 @@ const updateSomeUsers = async (req, res) => {
 
 const deleteOneUser = async (req, res) => {
   try {
-    const { id } = req.params?.userId;
+    const  id  = req.params?.userId;
     if (!hasValue(id)) {
       return res.status(400).json({ error: "userId is required in params" });
     }
@@ -109,7 +109,7 @@ const deleteOneUser = async (req, res) => {
 
 const deleteSomeUsers = async (req, res) => {
   try {
-    const { ids } = req.query?.userIds;
+    const  ids  = req.query?.userIds;
     if (!hasValue(ids)) {
       return res.status(400).json({ error: "userIds are required in query" });
     }

@@ -1,14 +1,15 @@
-
 const { Prisma, PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
-const bcrypt = require('bcrypt');
+const bcrypt = require("bcrypt");
 const { checkDuplicateEmail } = require("../utils/checkDuplicateEmail");
 const { comparePasswords } = require("../utils/comparePasswords");
-const { createJWT } = require("../utils/createJWT")
-const { generateVerificationLink } = require("../utils/generateVerificationLink");
+const { createJWT } = require("../utils/createJWT");
+const {
+  generateVerificationLink,
+} = require("../utils/generateVerificationLink");
 const { verifyMail, sendMagicLink } = require("../utils/verifyMail");
 const { uploadImageToS3 } = require("../utils/awsUploadImage");
-const crypto = require('crypto');
+const crypto = require("crypto");
 
 const getAllUsers = async () => {
   try {
@@ -17,29 +18,107 @@ const getAllUsers = async () => {
     return allusers;
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ message: 'internal server error' })
+    return res.status(500).json({ message: "internal server error" });
   }
-
 };
 
-// const getOneuser = () => {
-//   return;
-// };
+const getOneUser = async (req, res) => {
+  try {
+    const id = req.params.userId;
+    const user = await prisma.User.findUnique({
+      where: {
+        id: id,
+      },
+    });
+    if (!user) {
+      return res.status(404).json({ message: "User doesn't exist" });
+    } else {
+      return res.status(200).json({
+        message: "user details",
+        success: true,
+        user: {
+          email: user.email,
+          name: user.name,
+          emailVerified: user.emailVerified,
+          profile: user.profile,
+        },
+      });
+    }
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "internal server error" });
+  }
+};
 
+const getSomeUsers = async (req, res) => {
+  try {
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "internal server error" });
+  }
+};
 
+const updateOneUser = async (req, res) => {
+  try {
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "internal server error" });
+  }
+};
 
+const updateSomeUsers = async (req, res) => {
+  try {
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "internal server error" });
+  }
+};
+
+const updateAllUsers = async (req, res) => {
+  try {
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "internal server error" });
+  }
+};
+
+const deleteOneUser = async (req, res) => {
+  try {
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "internal server error" });
+  }
+};
+
+const deleteSomeUsers = async (req, res) => {
+  try {
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "internal server error" });
+  }
+};
+
+const deleteAllUsers = async (req, res) => {
+  try {
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "internal server error" });
+  }
+};
 
 const createNewUser = async (req, res) => {
   try {
     let { name, password, email } = req.body;
     if (await checkDuplicateEmail(email)) {
-      return res.status(400).json({ error: 'email already exist' });
+      return res.status(400).json({ error: "email already exist" });
     }
     const saltRounds = 10;
     const salt = await bcrypt.genSalt(saltRounds);
     const hashedPassword = await bcrypt.hash(password, salt);
     const userToInsert = {
-      name, pass: hashedPassword, email,
+      name,
+      pass: hashedPassword,
+      email,
       emailVerified: false,
     };
     const createdUser = await prisma.User.create({ data: userToInsert });
@@ -52,11 +131,16 @@ const createNewUser = async (req, res) => {
     });
     return res
       .status(201)
-      .json({ message: "User signed in successfully", success: true, createdUser, emaiVerification: verificaton });
+      .json({
+        message: "User signed in successfully",
+        success: true,
+        createdUser,
+        emaiVerification: verificaton,
+      });
     // res.status(201).send({ status: "OK", data: createdUser });}
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ message: 'internal server error' })
+    return res.status(500).json({ message: "internal server error" });
   }
 };
 
@@ -72,26 +156,48 @@ const userLogin = async (req, res) => {
       return res.status(404).json({ message: "User doesn't exist" });
     }
     if (!comparePasswords(password, user.pass)) {
-      return res.status(401).json({ message: 'Incorrect password or email' })
+      return res.status(401).json({ message: "Incorrect password or email" });
     }
     const token = await createJWT(user.id);
     res.cookie("token", token, {
       withCredentials: true,
       httpOnly: false,
-      sameSite: 'lax',
+      sameSite: "lax",
       // path: '/refresh_token',
     });
     // res.cookies.set("set",true);
     if (user.profile) {
-      return res.status(200).json({ message: "User logged in successfully", success: true, token, userData: { user: user.name, email: user.email, profileComplete: true } });
+      return res
+        .status(200)
+        .json({
+          message: "User logged in successfully",
+          success: true,
+          token,
+          userData: {
+            user: user.name,
+            email: user.email,
+            profileComplete: true,
+          },
+        });
     } else {
-      return res.status(200).json({ message: "User logged in successfully", success: true, token, userData: { user: user.name, email: user.email, profileComplete: false } });
+      return res
+        .status(200)
+        .json({
+          message: "User logged in successfully",
+          success: true,
+          token,
+          userData: {
+            user: user.name,
+            email: user.email,
+            profileComplete: false,
+          },
+        });
     }
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ message: 'internal server error' })
+    return res.status(500).json({ message: "internal server error" });
   }
-}
+};
 
 const verifyEmail = async (req, res, result) => {
   try {
@@ -102,12 +208,14 @@ const verifyEmail = async (req, res, result) => {
       },
     });
     console.log("updated user >> ", updatedUser);
-    return res.status(200).json({ message: "email verified successfully", success: true });
+    return res
+      .status(200)
+      .json({ message: "email verified successfully", success: true });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ message: 'internal server error' })
+    return res.status(500).json({ message: "internal server error" });
   }
-}
+};
 
 const reVerifyEmail = async (req, res) => {
   try {
@@ -116,12 +224,16 @@ const reVerifyEmail = async (req, res) => {
     let verificaton = await verifyMail(email, name, vlink);
     return res
       .status(200)
-      .json({ message: "email resent successfully", success: true, emailVerification: verificaton });
+      .json({
+        message: "email resent successfully",
+        success: true,
+        emailVerification: verificaton,
+      });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ message: 'internal server error' })
+    return res.status(500).json({ message: "internal server error" });
   }
-}
+};
 const magicLogin = async (req, res) => {
   try {
     let { email } = req.body;
@@ -138,19 +250,23 @@ const magicLogin = async (req, res) => {
     let verificaton = await sendMagicLink(email, user.name, vlink);
     return res
       .status(200)
-      .json({ message: "Magic Link sent successfully", success: true, sendStatus: verificaton });
+      .json({
+        message: "Magic Link sent successfully",
+        success: true,
+        sendStatus: verificaton,
+      });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ message: 'internal server error' })
+    return res.status(500).json({ message: "internal server error" });
   }
-}
+};
 
 const verifyMagicLink = async (req, res, result) => {
   try {
     const user = await prisma.User.findUnique({
       where: {
-        id: result.id
-      }
+        id: result.id,
+      },
     });
     if (!user) {
       return res.status(404).json({ message: "User doesn't exist" });
@@ -160,27 +276,33 @@ const verifyMagicLink = async (req, res, result) => {
       withCredentials: true,
       httpOnly: false,
     });
-    return res.status(200).json({ message: "User logged in successfully", success: true });
+    return res
+      .status(200)
+      .json({ message: "User logged in successfully", success: true });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ message: 'internal server error' })
+    return res.status(500).json({ message: "internal server error" });
   }
-}
+};
 
 const createProfile = async (req, res) => {
   try {
     const { bio, profession, id } = req.body;
     const imageFile = req.files.imageFile.data;
-    console.log("image >>",imageFile)
+    console.log("image >>", imageFile);
     // console.log("req",req);
-    const generateFileName = (bytes = 32) => crypto.randomBytes(bytes).toString('hex')
+    const generateFileName = (bytes = 32) =>
+      crypto.randomBytes(bytes).toString("hex");
     const s3Response = await uploadImageToS3(imageFile, generateFileName);
     const profileToInsert = {
-      bio, profilePhoto: generateFileName,
+      bio,
+      profilePhoto: generateFileName,
       profession,
-      user: id
+      user: id,
     };
-    const createdProfile = await prisma.Profile.create({ data: profileToInsert });
+    const createdProfile = await prisma.Profile.create({
+      data: profileToInsert,
+    });
     const updatedUser = await prisma.User.update({
       where: { id: id },
       data: {
@@ -190,27 +312,25 @@ const createProfile = async (req, res) => {
     res.status(201).json({ savedProfile, updatedUser });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ message: 'internal server error' })
+    return res.status(500).json({ message: "internal server error" });
   }
-}
-// const updateOneuser = () => {
-//   return;
-// };
-
-// const deleteOneuser = () => {
-//   return;
-// };
+};
 
 module.exports = {
   getAllUsers,
-  // getOneuser,
+  getOneUser,
+  getSomeUsers,
   createNewUser,
+  updateOneUser,
+  updateSomeUsers,
+  updateAllUsers,
+  deleteOneUser,
+  deleteSomeUsers,
+  deleteAllUsers,
   userLogin,
   verifyEmail,
   reVerifyEmail,
   magicLogin,
   verifyMagicLink,
   createProfile,
-  // updateOneuser,
-  // deleteOneuser,
 };
