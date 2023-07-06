@@ -109,6 +109,11 @@ const deleteOneUser = async (req, res) => {
 
 const deleteSomeUsers = async (req, res) => {
   try {
+    const { ids } = req.query?.userIds;
+    if (!hasValue(ids)) {
+      return res.status(400).json({ error: "userIds are required in query" });
+    }
+    await userService.deleteSomeUsers(req, res);
   } catch (error) {
     console.log("err", error);
     return res.status(500).json({ error: error });
