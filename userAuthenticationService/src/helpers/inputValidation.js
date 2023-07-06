@@ -14,8 +14,31 @@ const isNameValid = (name) => {
   return nameRegex.test(name);
 };
 
+const hasValue = (...values) => {
+  if (values.length == 0) {
+    return false;
+  }
+  for (const value of values) {
+    if (typeof value === "object" && value !== null) {
+      if (Object.keys(value).length === 0) {
+        return false;
+      }
+    }
+    if (
+      value == "" ||
+      value == null ||
+      value == undefined ||
+      value.toString().trim() == ""
+    ) {
+      return false;
+    }
+    return true;
+  }
+};
+
 module.exports = {
   isEmailValid,
   isPassValid,
   isNameValid,
+  hasValue,
 };
