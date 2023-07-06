@@ -18,7 +18,7 @@ const getOneUser = async (req, res) => {
   try {
     const { id } = req.params?.userId;
     if (!hasValue(id)) {
-      return res.status(400).json({ error: "id is required" });
+      return res.status(400).json({ error: "userId is required in params" });
     }
     await userService.getOneUser(req, res);
   } catch (error) {
@@ -29,7 +29,11 @@ const getOneUser = async (req, res) => {
 
 const getSomeUsers = async (req, res) => {
   try {
-    const { ids } = req.query;
+    const { ids } = req.query?.userIds;
+    if (!hasValue(ids)) {
+        return res.status(400).json({ error: "userIds are required in query" });
+      }
+      await userService.getSomeUser(req, res);
   } catch (error) {
     console.log("err", error);
     return res.status(500).json({ error: error });
