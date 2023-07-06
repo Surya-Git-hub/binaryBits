@@ -1,15 +1,16 @@
 const userService = require("../services/userService");
 const { checkVerificationLink } = require("../utils/checkVerificationLink");
 const { verifyJWT } = require("../utils/verifyJWT");
+const { isEmailValid, isPassValid, isNameValid } = require("../helpers");
 
 const getAllUsers = async (req, res) => {
-    try {
-        const allusers = await userService.getAllUsers();
-        return res.status(200).json({ status: "OK", data: allusers });
-    } catch (error) {
-        console.log("error", error);
-        return res.status(500).json({ error: error });
-    }
+  try {
+    const allusers = await userService.getAllUsers();
+    return res.status(200).json({ status: "OK", data: allusers });
+  } catch (error) {
+    console.log("error", error);
+    return res.status(500).json({ error: error });
+  }
 };
 
 // const getOneUser = (req, res) => {
@@ -18,145 +19,161 @@ const getAllUsers = async (req, res) => {
 // };
 
 const createNewUser = async (req, res) => {
-    try {
-        const { name, email, password } = req.body;
-        if (!name || !email || !password) {
-            return res.status(400).json({ error: 'Name, email and password are required' });
-        }
-        const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-        if (!emailRegex.test(email)) {
-            return res.status(400).json({ error: 'Invalid email' });
-        }
-        const passRegex = /^(?=.*[!@#$%^&*(),.?":{}|<>])(?=.*[A-Z])(?=.*[a-z])(?=.*\d).{8,}$/;
-        if (!passRegex.test(password)) {
-            return res.status(400).json({ error: 'password should contain atleast one special char,one number,one uppercase letter,one lowercase letter' });
-        }
-        const nameRegex = /^[a-zA-Z]{3,}$/;
-        if (!nameRegex.test(name)) {
-            return res.status(400).json({ error: 'only alphabets allowed of atleast of length 3' });
-        }
-
-        await userService.createNewUser(req, res);
-    } catch (error) {
-        console.log("error", error);
-        return res.status(500).json({ error: error });
+  try {
+    const { name, email, password } = req.body;
+    if (!name || !email || !password) {
+      return res
+        .status(400)
+        .json({ error: "Name, email and password are required" });
     }
+
+    if (!isEmailValid(email)) {
+      return res.status(400).json({ error: "Invalid email" });
+    }
+
+    if (!isPassValid(password)) {
+      return res
+        .status(400)
+        .json({
+          error:
+            "password should contain atleast one special char,one number,one uppercase letter,one lowercase letter",
+        });
+    }
+
+    if (!isNameValid(name)) {
+      return res
+        .status(400)
+        .json({ error: "only alphabets allowed of atleast of length 3" });
+    }
+
+    await userService.createNewUser(req, res);
+  } catch (error) {
+    console.log("error", error);
+    return res.status(500).json({ error: error });
+  }
 };
 
 const userLogin = async (req, res) => {
-    try {
-        const { email, password } = req.body;
-        if (!email || !password) {
-            return res.status(400).json({ error: 'email and password are required' });
-        }
-        const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-        if (!emailRegex.test(email)) {
-            return res.status(400).json({ error: 'Invalid email' });
-        }
-        const passRegex = /^(?=.*[!@#$%^&*(),.?":{}|<>])(?=.*[A-Z])(?=.*[a-z])(?=.*\d).{8,}$/;
-        if (!passRegex.test(password)) {
-            return res.status(400).json({ error: 'password should contain atleast one special char,one number,one uppercase letter,one lowercase letter' });
-        }
-        await userService.userLogin(req, res);
-    } catch (error) {
-        console.log("error", error);
-        return res.status(500).json({ error: error });
+  try {
+    const { email, password } = req.body;
+    if (!email || !password) {
+      return res.status(400).json({ error: "email and password are required" });
     }
-}
+
+    if (!isEmailValid(email)) {
+      return res.status(400).json({ error: "Invalid email" });
+    }
+
+    if (!isPassValid(password)) {
+      return res
+        .status(400)
+        .json({
+          error:
+            "password should contain atleast one special char,one number,one uppercase letter,one lowercase letter",
+        });
+    }
+    await userService.userLogin(req, res);
+  } catch (error) {
+    console.log("error", error);
+    return res.status(500).json({ error: error });
+  }
+};
 
 const verifyEmail = async (req, res) => {
-    try {
-        const token = req.query.token;
-        if (!token) {
-            return res.status(400).json({ error: 'token is invalid or not found' });
-        }
-        const result = await checkVerificationLink(token);
-        if (!result.match) {
-            return res.status(400).json({ error: 'token not matched' });
-        }
-        await userService.verifyEmail(req, res, result);
-    } catch (error) {
-        console.log("error", error);
-        return res.status(500).json({ error: error });
+  try {
+    const token = req.query.token;
+    if (!token) {
+      return res.status(400).json({ error: "token is invalid or not found" });
     }
-}
+    const result = await checkVerificationLink(token);
+    if (!result.match) {
+      return res.status(400).json({ error: "token not matched" });
+    }
+    await userService.verifyEmail(req, res, result);
+  } catch (error) {
+    console.log("error", error);
+    return res.status(500).json({ error: error });
+  }
+};
 
 const reVerifyEmail = async (req, res) => {
-    try {
-        await userService.reVerifyEmail(req, res);
-    } catch (error) {
-        console.log(error);
-        return res.status(500).json({ error: error });
-
-    }
-}
+  try {
+    await userService.reVerifyEmail(req, res);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ error: error });
+  }
+};
 const magicLogin = async (req, res) => {
-    try {
-        const { email } = req.body;
-        if (!email) {
-            return res.status(400).json({ error: 'email is required' });
-        }
-        const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-        if (!emailRegex.test(email)) {
-            return res.status(400).json({ error: 'Invalid email' });
-        }
-        await userService.magicLogin(req, res);
-    } catch (error) {
-        console.log(error);
-        return res.status(500).json({ error: error });
+  try {
+    const { email } = req.body;
+    if (!email) {
+      return res.status(400).json({ error: "email is required" });
     }
-}
+
+    if (!isEmailValid(email)) {
+      return res.status(400).json({ error: "Invalid email" });
+    }
+    await userService.magicLogin(req, res);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ error: error });
+  }
+};
 const verifyMagicLink = async (req, res) => {
-    try {
-        const token = req.query.token;
-        if (!token) {
-            return res.status(400).json({ error: 'token is invalid or not found' });
-        }
-        const result = await verifyJWT(token);
-        console.log("result >>", result);
-        if (!result) {
-            return res.status(400).json({ error: 'token verification failed' });
-        }
-        await userService.verifyMagicLink(req, res, result);
-
-    } catch (error) {
-        console.log(error);
-        return res.status(500).json({ error: error });
+  try {
+    const token = req.query.token;
+    if (!token) {
+      return res.status(400).json({ error: "token is invalid or not found" });
     }
-}
+    const result = await verifyJWT(token);
+    console.log("result >>", result);
+    if (!result) {
+      return res.status(400).json({ error: "token verification failed" });
+    }
+    await userService.verifyMagicLink(req, res, result);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ error: error });
+  }
+};
 const createProfile = async (req, res) => {
-    try {
-        const { profession, bio, imageFile } = req.body;
-        if (!profession && !bio && !imageFile) {
-            return res.status(200).json({ status: 'Nothing saved because nothing to save' });
-        }
-        const professionRegex = /^[a-zA-Z\s]+$/;
-        const bioRegex = /^.{0,150}$/;
-        if (!professionRegex.test(profession) && profession !== "") {
-            return res.status(400).json({ error: 'profession is invalid' });
-        }
-        if (!bioRegex.test(bio) && bio !== "") {
-            return res.status(400).json({ error: 'bio is invalid' });
-        }
-        if (imageFile) {
-            const allowedExtensions = ['.jpg', '.jpeg', '.png', '.svg', '.img'];
-            const fileExtension = imageFile.originalname.split('.').pop().toLowerCase();
-            if (!allowedExtensions.includes(fileExtension)) {
-                return res.status(400).json({ error: 'Invalid imageFile extension' });
-            }
-            const maxSize = 10 * 1024 * 1024; // 10MB
-            if (imageFile.size > maxSize) {
-                return res.status(400).json({ error: 'File size exceeds the limit' });
-            }
-        }
-
-        await userService.createProfile(req, res);
-
-    } catch (error) {
-        console.log(error);
-        return res.status(500).json({ error: error });
+  try {
+    const { profession, bio, imageFile } = req.body;
+    if (!profession && !bio && !imageFile) {
+      return res
+        .status(200)
+        .json({ status: "Nothing saved because nothing to save" });
     }
-}
+    const professionRegex = /^[a-zA-Z\s]+$/;
+    const bioRegex = /^.{0,150}$/;
+    if (!professionRegex.test(profession) && profession !== "") {
+      return res.status(400).json({ error: "profession is invalid" });
+    }
+    if (!bioRegex.test(bio) && bio !== "") {
+      return res.status(400).json({ error: "bio is invalid" });
+    }
+    if (imageFile) {
+      const allowedExtensions = [".jpg", ".jpeg", ".png", ".svg", ".img"];
+      const fileExtension = imageFile.originalname
+        .split(".")
+        .pop()
+        .toLowerCase();
+      if (!allowedExtensions.includes(fileExtension)) {
+        return res.status(400).json({ error: "Invalid imageFile extension" });
+      }
+      const maxSize = 10 * 1024 * 1024; // 10MB
+      if (imageFile.size > maxSize) {
+        return res.status(400).json({ error: "File size exceeds the limit" });
+      }
+    }
+
+    await userService.createProfile(req, res);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ error: error });
+  }
+};
 // const updateOneuser = (req, res) => {
 //     const updateduser = userService.updateOneuser();
 //     res.send("Update an existing user");
@@ -168,15 +185,15 @@ const createProfile = async (req, res) => {
 // };
 
 module.exports = {
-    getAllUsers,
-    // getOneuser,
-    createNewUser,
-    userLogin,
-    verifyEmail,
-    reVerifyEmail,
-    magicLogin,
-    verifyMagicLink,
-    createProfile,
-    // updateOneuser,
-    // deleteOneuser,
+  getAllUsers,
+  // getOneuser,
+  createNewUser,
+  userLogin,
+  verifyEmail,
+  reVerifyEmail,
+  magicLogin,
+  verifyMagicLink,
+  createProfile,
+  // updateOneuser,
+  // deleteOneuser,
 };
