@@ -20,6 +20,7 @@ const getOneUser = async (req, res) => {
     if (!hasValue(id)) {
       return res.status(400).json({ error: "id is required" });
     }
+    await userService.getOneUser(req, res);
   } catch (error) {
     console.log("err", error);
     return res.status(500).json({ error: error });
@@ -28,6 +29,7 @@ const getOneUser = async (req, res) => {
 
 const getSomeUsers = async (req, res) => {
   try {
+    const { ids } = req.query;
   } catch (error) {
     console.log("err", error);
     return res.status(500).json({ error: error });
