@@ -122,6 +122,7 @@ const deleteSomeUsers = async (req, res) => {
 
 const deleteAllUsers = async (req, res) => {
   try {
+    await userService.deleteAllUsers(req, res);
   } catch (error) {
     console.log("err", error);
     return res.status(500).json({ error: error });
