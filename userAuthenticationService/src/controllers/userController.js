@@ -33,7 +33,7 @@ const getSomeUsers = async (req, res) => {
     if (!hasValue(ids)) {
       return res.status(400).json({ error: "userIds are required in query" });
     }
-    await userService.getSomeUser(req, res);
+    await userService.getSomeUsers(req, res);
   } catch (error) {
     console.log("err", error);
     return res.status(500).json({ error: error });
@@ -69,7 +69,7 @@ const updateAllUsers = async (req, res) => {
     return res
       .status(400)
       .json({ error: "don't know why i created this mess" });
-    await userService.updateOneUser(req, res);
+    await userService.updateAllUsers(req, res);
   } catch (error) {
     console.log("err", error);
     return res.status(500).json({ error: error });
@@ -78,6 +78,16 @@ const updateAllUsers = async (req, res) => {
 
 const updateSomeUsers = async (req, res) => {
   try {
+    const { name, email, password, userIds } = req.body;
+    if (!hasValue(id)) {
+      return res.status(400).json({ error: "userIds are required in params" });
+    }
+    if (!hasValue(name) && hasValue(email) && !hasValue(password)) {
+      return res
+        .status(400)
+        .json({ error: "something is required update something" });
+    }
+    await userService.updateSomeUsers(req, res);
   } catch (error) {
     console.log("err", error);
     return res.status(500).json({ error: error });
@@ -86,6 +96,7 @@ const updateSomeUsers = async (req, res) => {
 
 const deleteOneUser = async (req, res) => {
   try {
+    
   } catch (error) {
     console.log("err", error);
     return res.status(500).json({ error: error });
