@@ -31,9 +31,9 @@ const getSomeUsers = async (req, res) => {
   try {
     const { ids } = req.query?.userIds;
     if (!hasValue(ids)) {
-        return res.status(400).json({ error: "userIds are required in query" });
-      }
-      await userService.getSomeUser(req, res);
+      return res.status(400).json({ error: "userIds are required in query" });
+    }
+    await userService.getSomeUser(req, res);
   } catch (error) {
     console.log("err", error);
     return res.status(500).json({ error: error });
@@ -42,6 +42,16 @@ const getSomeUsers = async (req, res) => {
 
 const updateOneUser = async (req, res) => {
   try {
+    const { name, email, password, id } = req.body;
+    if (!hasValue(id)) {
+      return res.status(400).json({ error: "userId is required in params" });
+    }
+    if (!hasValue(name) && hasValue(email) && !hasValue(password)) {
+      return res
+        .status(400)
+        .json({ error: "something is required update something" });
+    }
+    await userService.updateOneUser(req, res);
   } catch (error) {
     console.log("err", error);
     return res.status(500).json({ error: error });
@@ -50,6 +60,16 @@ const updateOneUser = async (req, res) => {
 
 const updateAllUsers = async (req, res) => {
   try {
+    const { name, email, password } = req.body;
+    if (!hasValue(name) && hasValue(email) && !hasValue(password)) {
+      return res
+        .status(400)
+        .json({ error: "something is required update something" });
+    }
+    return res
+      .status(400)
+      .json({ error: "don't know why i created this mess" });
+    await userService.updateOneUser(req, res);
   } catch (error) {
     console.log("err", error);
     return res.status(500).json({ error: error });
@@ -91,7 +111,7 @@ const deleteAllUsers = async (req, res) => {
 const createNewUser = async (req, res) => {
   try {
     const { name, email, password } = req.body;
-    if (!hasValue(email,password,name)) {
+    if (!hasValue(email, password, name)) {
       return res
         .status(400)
         .json({ error: "Name, email and password are required" });
@@ -124,7 +144,7 @@ const createNewUser = async (req, res) => {
 const userLogin = async (req, res) => {
   try {
     const { email, password } = req.body;
-    if (!hasValue(email,password)) {
+    if (!hasValue(email, password)) {
       return res.status(400).json({ error: "email and password are required" });
     }
 
