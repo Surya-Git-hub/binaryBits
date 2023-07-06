@@ -2,6 +2,7 @@ const userService = require("../services/userService");
 const { checkVerificationLink } = require("../utils/checkVerificationLink");
 const { verifyJWT } = require("../utils/verifyJWT");
 const { isEmailValid, isPassValid, isNameValid } = require("../helpers");
+const { hasValue } = require("../helpers/inputValidation");
 
 const getAllUsers = async (req, res) => {
   try {
@@ -13,15 +14,78 @@ const getAllUsers = async (req, res) => {
   }
 };
 
-// const getOneUser = (req, res) => {
-//     const user = userService.getOneuser();
-//     res.send("Get an existing user");
-// };
+const getOneUser = async (req, res) => {
+  try {
+    const { id } = req.params?.userId;
+    if (!hasValue(id)) {
+      return res.status(400).json({ error: "id is required" });
+    }
+  } catch (error) {
+    console.log("err", error);
+    return res.status(500).json({ error: error });
+  }
+};
+
+const getSomeUsers = async (req, res) => {
+  try {
+  } catch (error) {
+    console.log("err", error);
+    return res.status(500).json({ error: error });
+  }
+};
+
+const updateOneUser = async (req, res) => {
+  try {
+  } catch (error) {
+    console.log("err", error);
+    return res.status(500).json({ error: error });
+  }
+};
+
+const updateAllUsers = async (req, res) => {
+  try {
+  } catch (error) {
+    console.log("err", error);
+    return res.status(500).json({ error: error });
+  }
+};
+
+const updateSomeUsers = async (req, res) => {
+  try {
+  } catch (error) {
+    console.log("err", error);
+    return res.status(500).json({ error: error });
+  }
+};
+
+const deleteOneUser = async (req, res) => {
+  try {
+  } catch (error) {
+    console.log("err", error);
+    return res.status(500).json({ error: error });
+  }
+};
+
+const deleteSomeUsers = async (req, res) => {
+  try {
+  } catch (error) {
+    console.log("err", error);
+    return res.status(500).json({ error: error });
+  }
+};
+
+const deleteAllUsers = async (req, res) => {
+  try {
+  } catch (error) {
+    console.log("err", error);
+    return res.status(500).json({ error: error });
+  }
+};
 
 const createNewUser = async (req, res) => {
   try {
     const { name, email, password } = req.body;
-    if (!name || !email || !password) {
+    if (!hasValue(email,password,name)) {
       return res
         .status(400)
         .json({ error: "Name, email and password are required" });
@@ -32,12 +96,10 @@ const createNewUser = async (req, res) => {
     }
 
     if (!isPassValid(password)) {
-      return res
-        .status(400)
-        .json({
-          error:
-            "password should contain atleast one special char,one number,one uppercase letter,one lowercase letter",
-        });
+      return res.status(400).json({
+        error:
+          "password should contain atleast one special char,one number,one uppercase letter,one lowercase letter",
+      });
     }
 
     if (!isNameValid(name)) {
@@ -56,7 +118,7 @@ const createNewUser = async (req, res) => {
 const userLogin = async (req, res) => {
   try {
     const { email, password } = req.body;
-    if (!email || !password) {
+    if (!hasValue(email,password)) {
       return res.status(400).json({ error: "email and password are required" });
     }
 
@@ -65,12 +127,10 @@ const userLogin = async (req, res) => {
     }
 
     if (!isPassValid(password)) {
-      return res
-        .status(400)
-        .json({
-          error:
-            "password should contain atleast one special char,one number,one uppercase letter,one lowercase letter",
-        });
+      return res.status(400).json({
+        error:
+          "password should contain atleast one special char,one number,one uppercase letter,one lowercase letter",
+      });
     }
     await userService.userLogin(req, res);
   } catch (error) {
@@ -82,7 +142,7 @@ const userLogin = async (req, res) => {
 const verifyEmail = async (req, res) => {
   try {
     const token = req.query.token;
-    if (!token) {
+    if (!hasValue(token)) {
       return res.status(400).json({ error: "token is invalid or not found" });
     }
     const result = await checkVerificationLink(token);
@@ -104,6 +164,7 @@ const reVerifyEmail = async (req, res) => {
     return res.status(500).json({ error: error });
   }
 };
+
 const magicLogin = async (req, res) => {
   try {
     const { email } = req.body;
@@ -120,6 +181,7 @@ const magicLogin = async (req, res) => {
     return res.status(500).json({ error: error });
   }
 };
+
 const verifyMagicLink = async (req, res) => {
   try {
     const token = req.query.token;
@@ -137,10 +199,11 @@ const verifyMagicLink = async (req, res) => {
     return res.status(500).json({ error: error });
   }
 };
+
 const createProfile = async (req, res) => {
   try {
     const { profession, bio, imageFile } = req.body;
-    if (!profession && !bio && !imageFile) {
+    if (!hasValue(profession) && !hasValue(bio) && !hasValue(imageFile)) {
       return res
         .status(200)
         .json({ status: "Nothing saved because nothing to save" });
@@ -174,19 +237,11 @@ const createProfile = async (req, res) => {
     return res.status(500).json({ error: error });
   }
 };
-// const updateOneuser = (req, res) => {
-//     const updateduser = userService.updateOneuser();
-//     res.send("Update an existing user");
-// };
-
-// const deleteOneuser = (req, res) => {
-//     userService.deleteOneuser();
-//     res.send("Delete an existing user");
-// };
 
 module.exports = {
   getAllUsers,
-  // getOneuser,
+  getOneUser,
+  getSomeUsers,
   createNewUser,
   userLogin,
   verifyEmail,
@@ -194,6 +249,10 @@ module.exports = {
   magicLogin,
   verifyMagicLink,
   createProfile,
-  // updateOneuser,
-  // deleteOneuser,
+  updateOneUser,
+  updateSomeUsers,
+  updateAllUsers,
+  deleteOneUser,
+  deleteSomeUsers,
+  deleteAllUsers,
 };
