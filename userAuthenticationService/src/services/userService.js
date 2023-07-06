@@ -114,6 +114,11 @@ const updateOneUser = async (req, res) => {
     } else {
       return res.status(400).json({ error: "invalid update level" });
     }
+    return res.status(200).json({
+      message: "user updated",
+      success: true,
+      users: [updatedUser],
+    });
   } catch (error) {
     console.log(error);
     return res.status(500).json({ message: "internal server error" });
@@ -160,6 +165,11 @@ const updateSomeUsers = async (req, res) => {
     } else {
       return res.status(400).json({ error: "invalid update level" });
     }
+    return res.status(200).json({
+      message: "user updated",
+      success: true,
+      users: [updatedUser],
+    });
   } catch (error) {
     console.log(error);
     return res.status(500).json({ message: "internal server error" });
@@ -194,6 +204,11 @@ const updateAllUsers = async (req, res) => {
     } else {
       return res.status(400).json({ error: "invalid update level" });
     }
+    return res.status(200).json({
+      message: "user updated",
+      success: true,
+      users: [updatedUser],
+    });
   } catch (error) {
     console.log(error);
     return res.status(500).json({ message: "internal server error" });
@@ -202,6 +217,20 @@ const updateAllUsers = async (req, res) => {
 
 const deleteOneUser = async (req, res) => {
   try {
+    const id = req.params.userId;
+    const user = await prisma.user.delete({
+      where: {
+        id: id,
+      },
+    });
+    if (!user) {
+      return res.status(404).json({ message: "User doesn't exist" });
+    } else {
+      return res.status(200).json({
+        message: "user deleted",
+        success: true,
+      });
+    }
   } catch (error) {
     console.log(error);
     return res.status(500).json({ message: "internal server error" });
@@ -210,6 +239,24 @@ const deleteOneUser = async (req, res) => {
 
 const deleteSomeUsers = async (req, res) => {
   try {
+    const ids = req.query?.userIds;
+    const userIds = ids.split(",");
+    if (userIds.length <= 0) {
+      return res.status(400).json({ error: "userIds are required in query" });
+    }
+    let users = await prisma.user.deleteMany({
+      where: {
+        id: { in: userIds },
+      },
+    });
+    if (!users) {
+      return res.status(404).json({ message: "User doesn't exist" });
+    }
+    return res.status(200).json({
+      message: "deleted users",
+      success: true,
+      users: [...users],
+    });
   } catch (error) {
     console.log(error);
     return res.status(500).json({ message: "internal server error" });
@@ -218,6 +265,12 @@ const deleteSomeUsers = async (req, res) => {
 
 const deleteAllUsers = async (req, res) => {
   try {
+    let users = await prisma.user.deleteMany()
+    return res.status(200).json({
+      message: "deleted all users",
+      success: true,
+      users: [...users],
+    });
   } catch (error) {
     console.log(error);
     return res.status(500).json({ message: "internal server error" });
