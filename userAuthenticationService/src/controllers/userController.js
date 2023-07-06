@@ -96,7 +96,11 @@ const updateSomeUsers = async (req, res) => {
 
 const deleteOneUser = async (req, res) => {
   try {
-    
+    const { id } = req.params?.userId;
+    if (!hasValue(id)) {
+      return res.status(400).json({ error: "userId is required in params" });
+    }
+    await userService.deleteOneUser(req, res);
   } catch (error) {
     console.log("err", error);
     return res.status(500).json({ error: error });
