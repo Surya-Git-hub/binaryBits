@@ -42,11 +42,14 @@ const getSomeUsers = async (req, res) => {
 
 const updateOneUser = async (req, res) => {
   try {
-    const { name, email, password, id } = req.body;
+    const { name, email, id ,level} = req.body;
     if (!hasValue(id)) {
       return res.status(400).json({ error: "userId is required in params" });
     }
-    if (!hasValue(name) && hasValue(email) && !hasValue(password)) {
+    if (!hasValue(level)) {
+      return res.status(400).json({ error: "level is required in params" });
+    }
+    if (!hasValue(name) && hasValue(email)) {
       return res
         .status(400)
         .json({ error: "something is required update something" });

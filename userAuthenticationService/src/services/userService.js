@@ -63,7 +63,10 @@ const getSomeUsers = async (req, res) => {
         id: { in: userIds },
       },
     });
-    res.status(200).json({
+    if (!users) {
+      return res.status(404).json({ message: "User doesn't exist" });
+    }
+    return res.status(200).json({
       message: "found users",
       success: true,
       users: [...users],
@@ -76,6 +79,41 @@ const getSomeUsers = async (req, res) => {
 
 const updateOneUser = async (req, res) => {
   try {
+    const { name, email, id, level } = req.body;
+    let updatedUser;
+    if (level == 2) {
+      updatedUser = await prisma.user.update({
+        where: {
+          id: id,
+        },
+        data: {
+          name: name,
+          email: email,
+          emailVerified: false,
+        },
+      });
+    } else if (level == 1) {
+      updatedUser = await prisma.user.update({
+        where: {
+          id: id,
+        },
+        data: {
+          email: email,
+          emailVerified: false,
+        },
+      });
+    } else if (level == 0) {
+      updatedUser = await prisma.user.update({
+        where: {
+          id: id,
+        },
+        data: {
+          name: name,
+        },
+      });
+    } else {
+      return res.status(400).json({ error: "invalid update level" });
+    }
   } catch (error) {
     console.log(error);
     return res.status(500).json({ message: "internal server error" });
