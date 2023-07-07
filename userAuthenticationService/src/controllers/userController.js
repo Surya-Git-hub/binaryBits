@@ -49,7 +49,7 @@ const updateOneUser = async (req, res) => {
     if (!hasValue(level)) {
       return res.status(400).json({ error: "level is required in body" });
     }
-    if (!hasValue(name) && hasValue(email)) {
+    if (!hasValue(name) && !hasValue(email)) {
       return res
         .status(400)
         .json({ error: "something is required update something" });
@@ -64,7 +64,7 @@ const updateOneUser = async (req, res) => {
 const updateAllUsers = async (req, res) => {
   try {
     const { name, email, level } = req.body;
-    if (!hasValue(name) && hasValue(email) && !hasValue(password)) {
+    if (!hasValue(name) && !hasValue(email) && !hasValue(password)) {
       return res
         .status(400)
         .json({ error: "something is required update something" });
@@ -85,7 +85,7 @@ const updateSomeUsers = async (req, res) => {
     if (!hasValue(ids)) {
       return res.status(400).json({ error: "ids are required in body" });
     }
-    if (!hasValue(name) && hasValue(email)) {
+    if (!hasValue(name) && !hasValue(email)) {
       return res
         .status(400)
         .json({ error: "something is required update something" });

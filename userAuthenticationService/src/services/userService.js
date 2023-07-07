@@ -135,7 +135,7 @@ const updateSomeUsers = async (req, res) => {
     if (level == 2) {
       updatedUser = await prisma.user.updateMany({
         where: {
-          id: { in: userIds },
+          id: { in: ids },
         },
         data: {
           name: name,
@@ -146,7 +146,7 @@ const updateSomeUsers = async (req, res) => {
     } else if (level == 1) {
       updatedUser = await prisma.user.updateMany({
         where: {
-          id: { in: userIds },
+          id: { in: ids },
         },
         data: {
           email: email,
@@ -156,7 +156,7 @@ const updateSomeUsers = async (req, res) => {
     } else if (level == 0) {
       updatedUser = await prisma.user.updateMany({
         where: {
-          id: { in: userIds },
+          id: { in: ids },
         },
         data: {
           name: name,
@@ -255,7 +255,7 @@ const deleteSomeUsers = async (req, res) => {
     return res.status(200).json({
       message: "deleted users",
       success: true,
-      users: [...users],
+      users: [users],
     });
   } catch (error) {
     console.log(error);
@@ -269,7 +269,7 @@ const deleteAllUsers = async (req, res) => {
     return res.status(200).json({
       message: "deleted all users",
       success: true,
-      users: [...users],
+      users: [users],
     });
   } catch (error) {
     console.log(error);
