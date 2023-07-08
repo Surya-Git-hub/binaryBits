@@ -58,7 +58,7 @@ const get = async (req, res) => {
     }
 }
 
-const update = async () => {
+const update = async (req, res) => {
     try {
 
         const { updates } = req.body;
@@ -110,7 +110,7 @@ const update = async () => {
     }
 }
 
-const remove = async () => {
+const remove = async (req, res) => {
     try {
         await profileService.remove(req, res);
     } catch (error) {

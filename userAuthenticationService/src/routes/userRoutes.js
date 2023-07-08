@@ -17,15 +17,15 @@ router.post("/magic-login", magicController.login);
 router.get("/verify-magic-link", magicController.verifyLink);
 
 //profile routes
-router.get("/:userId", profileController.get);
-router.post("/create-profile", isAuthenticated, isEmailVerified, profileController.create);
+router.get("/profile:userId", profileController.get);
+router.post("/profile", isAuthenticated, isEmailVerified, profileController.create);
 router.patch("/profile", isAuthenticated, isEmailVerified, profileController.update);
 router.delete("/profile", isAuthenticated, isEmailVerified, profileController.remove)
 
 //get user routes
 router.get("/some", userController.getSome);
-router.get("/:userId", userController.getOne);
-router.get("/", userController.getAll);
+router.get("/user:userId", userController.getOne);
+router.get("/users", userController.getAll);
 router.get("/protected", isAuthenticated, isEmailVerified, userController.getAll);
 
 //verification routes

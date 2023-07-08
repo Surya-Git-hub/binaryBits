@@ -50,10 +50,10 @@ const update = async (req, res) => {
     if (!existingProfile) {
       return res.status(404).json({ error: 'Profile not found' });
     }
-    const { updates } = req.body.updates
+    const { updates } = req.body
     const updatedProfile = await prisma.profile.update({
       where: { userId: req.body.id },
-      data: updates,
+      data: { ...updates },
     });
     return res.status(200).json({
       message: "user profile updated",
