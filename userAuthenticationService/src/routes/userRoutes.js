@@ -22,15 +22,15 @@ router.post("/profile", isAuthenticated, isEmailVerified, profileController.crea
 router.patch("/profile", isAuthenticated, isEmailVerified, profileController.update);
 router.delete("/profile", isAuthenticated, isEmailVerified, profileController.remove)
 
+//verification routes
+router.get("/verify", emailController.verify);
+router.get("/re-verify-email", isAuthenticated, emailController.reVerify);
+
 //get user routes
 router.get("/some", userController.getSome);
 router.get("/user:userId", userController.getOne);
 router.get("/users", userController.getAll);
 router.get("/protected", isAuthenticated, isEmailVerified, userController.getAll);
-
-//verification routes
-router.get("/verify", emailController.verify);
-router.get("/re-verify-email", isAuthenticated, emailController.reVerify);
 
 //user update routes
 router.patch("/updateOneUser", userController.updateOne);
