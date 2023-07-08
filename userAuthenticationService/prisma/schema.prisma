@@ -11,22 +11,119 @@ datasource db {
 }
 
 model User {
-  id    String  @id @default(auto()) @map("_id") @db.ObjectId
-  email String  @unique
-  name  String?
-  pass  String
-  emailVerified Boolean @default(false)
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-  profile      Profile?
+  id             String    @id @default(auto()) @map("_id") @db.ObjectId
+  email          String    @unique
+  name           String?
+  pass           String
+  emailVerified  Boolean   @default(false)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  profile        Profile?
+  posts          Post[]
+  comments       Comment[]
+  like           Like[]
+  skillsHave     Skill[]   @relation(name: "skillsUserHave", fields: [haveIds], references: [id])
+  haveIds        String[]  @db.ObjectId
+  skillsLearning Skill[]   @relation(name: "skillsUserLearning", fields: [learningIds], references: [id])
+  learningIds    String[]  @db.ObjectId
+  tags           Tag[]     @relation(fields: [tagIds], references: [id])
+  tagIds         String[]  @db.ObjectId
+  followedBy     User[]    @relation("UserFollows", fields: [followedByIDs], references: [id])
+  followedByIDs  String[]  @db.ObjectId
+  following      User[]    @relation("UserFollows", fields: [followingIDs], references: [id])
+  followingIDs   String[]  @db.ObjectId
+  // follows       User[]    @relation(name: "UserFollows", fields: [id], references: [id])
+  // followers     User[]    @relation(name: "UserFollowers", fields: [id], references: [id])
 }
 
 model Profile {
-  id           String      @id @default(auto()) @map("_id") @db.ObjectId
+  id           String    @id @default(auto()) @map("_id") @db.ObjectId
   bio          String?
   profilePhoto String?
   profession   String?
-  user         User     @relation(fields: [id], references: [id])
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  dob          DateTime?
+  location     String?
+  github       String?
+  socials      String[]
+  organiztions String[]
+  user         User      @relation(fields: [userId], references: [id])
+  userId       String    @unique @db.ObjectId
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
+
+model Post {
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  title       String?
+  slug        String
+  body        String?
+  author      User      @relation(fields: [authorId], references: [id])
+  authorId    String    @db.ObjectId
+  heroImage   String?
+  readersId   String[]  @db.ObjectId
+  timesReaded Int       @default(0)
+  tags        Tag[]     @relation(fields: [tagIds], references: [id])
+  tagIds      String[]  @db.ObjectId
+  comments    Comment[]
+  likes       Like[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Comment {
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  author      User      @relation(fields: [authorId], references: [id])
+  authorId    String    @db.ObjectId
+  body        String
+  commentedOn CommentOn
+  post        Post?     @relation(fields: [postId], references: [id])
+  postId      String?   @db.ObjectId
+  comment     Comment?  @relation(name: "commentOnComment", fields: [commentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  commentId   String?   @db.ObjectId
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  likes       Like[]
+  reply       Comment[] @relation(name: "commentOnComment")
+}
+
+enum CommentOn {
+  Post
+  Comment
+}
+
+model Like {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  author    User     @relation(fields: [authorId], references: [id])
+  authorId  String   @db.ObjectId
+  upvote    Boolean
+  type      LikeType
+  post      Post?    @relation(fields: [postId], references: [id])
+  postId    String?  @db.ObjectId
+  comment   Comment? @relation(fields: [commentId], references: [id])
+  commentId String?  @db.ObjectId
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum LikeType {
+  Post
+  Comment
+}
+
+model Skill {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  title       String
+  learning    User[]   @relation(name: "skillsUserLearning", fields: [learningIds], references: [id])
+  learningIds String[] @db.ObjectId
+  have        User[]   @relation(name: "skillsUserHave", fields: [haveIds], references: [id])
+  haveIds     String[] @db.ObjectId
+}
+
+model Tag {
+  id      String   @id @default(auto()) @map("_id") @db.ObjectId
+  name    String
+  posts   Post[]   @relation(fields: [postIds], references: [id])
+  postIds String[] @db.ObjectId
+  users   User[]   @relation(fields: [userIds], references: [id])
+  userIds String[] @db.ObjectId
 }
