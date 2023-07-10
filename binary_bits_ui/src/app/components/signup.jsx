@@ -5,58 +5,81 @@ import { useState } from 'react';
 import { ArrowRight } from 'lucide-react'
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
+import { useFormik } from "formik";
+import { signUpSchema } from "../helpers/yupSchemas";
 
 export default function SignUp() {
 
 
-    const [formData, setFormData] = useState({
-        name: '',
-        email: '',
-        password: ''
-    });
+    // const [formData, setFormData] = useState({
+    //     name: '',
+    //     email: '',
+    //     password: ''
+    // });
+
+    const initialValues = {
+        name: "",
+        email: "",
+        password: "",
+        confirm_password: "",
+    };
     const router = useRouter();
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+    // const handleSubmit = async (e) => {
+    //     e.preventDefault();
+    //     try {
+    //         const api = await axios.create({
+    //             // Set the base URL for your API requests
+    //             baseURL: 'http://localhost:5000',
 
-        try {
-            const api = await axios.create({
-                // Set the base URL for your API requests
-                baseURL: 'http://localhost:5000',
+    //             // Set the default headers to skip the preflight request
+    //             headers: {
+    //                 'Content-Type': 'application/json',
+    //                 'Access-Control-Allow-Origin': 'http://localhost:3000',
+    //                 'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE',
+    //                 'Access-Control-Allow-Headers': 'Content-Type',
+    //                 'Access-Control-Allow-Credentials': true,
+    //             },
+    //         });
+    //         const res = await api.post('http://localhost:5000/api/user/sign-up', formData);
 
-                // Set the default headers to skip the preflight request
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Access-Control-Allow-Origin': 'http://localhost:3000',
-                    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE',
-                    'Access-Control-Allow-Headers': 'Content-Type',
-                    'Access-Control-Allow-Credentials': true,
-                },
-            });
-            const res = await api.post('http://localhost:5000/api/user/sign-up', formData);
+    //         if (res.status == 201) {
+    //             // Handle successful signup
+    //             console.log('Signup successful', res);
+    //             router.push('/check-email')
 
-            if (res.status == 201) {
-                // Handle successful signup
-                console.log('Signup successful', res);
-                router.push('/check-email')
+    //         } else {
+    //             // Handle signup failure
+    //             console.log('Signup failed', res);
+    //         }
+    //     } catch (error) {
+    //         console.error('Error:', error);
+    //     }
+    // };
 
-            } else {
-                // Handle signup failure
-                console.log('Signup failed', res);
-            }
-        } catch (error) {
-            console.error('Error:', error);
-        }
-    };
+    // const handleChange = (e) => {
+    //     e.preventDefault();
+    //     setFormData((prevData) => ({
+    //         ...prevData,
+    //         [e.target.id]: e.target.value
+    //     }));
+    //     console.log(e.target.id, " ", e.target.value);
+    // };
 
-    const handleChange = (e) => {
-        e.preventDefault();
-        setFormData((prevData) => ({
-            ...prevData,
-            [e.target.id]: e.target.value
-        }));
-        console.log(e.target.id, " ", e.target.value);
-    };
+
+    const { values, handleBlur, handleChange, handleSubmit, errors, touched } =
+        useFormik({
+            initialValues,
+            validationSchema: signUpSchema,
+            validateOnChange: true,
+            validateOnBlur: false,
+            //// By disabling validation onChange and onBlur formik will validate on submit.
+            onSubmit: (values, action) => {
+                console.log("🚀 ~ file: App.jsx ~ line 17 ~ App ~ values", values);
+                //// to get rid of all the values after submitting the form
+                action.resetForm();
+            },
+        });
 
     return (
         <section className="rounded-md bg-black/80 p-2">
@@ -87,7 +110,7 @@ export default function SignUp() {
                             Sign In
                         </a>
                     </p>
-                    <form action="#" method="POST" onSubmit={async (e) => handleSubmit(e)} className="mt-8">
+                    <form action="#" method="POST" onSubmit={handleSubmit} className="mt-8">
                         <div className="space-y-5">
                             <div>
                                 <label htmlFor="name" className="text-base font-medium text-gray-900">
@@ -97,11 +120,16 @@ export default function SignUp() {
                                 <div className="mt-2">
                                     <input
                                         className="flex h-10 w-full rounded-md border border-gray-300 bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
-                                        type="text"
+                                        type="name"
                                         placeholder="Richard Hendricks"
                                         id="name"
-                                        onChange={(e) => handleChange(e)}
+                                        value={values.name}
+                                        onChange={handleChange}
+                                        onBlur={handleBlur}
                                     ></input>
+                                    {touched.name && errors.name ? (
+                                        <p className="form-error">{errors.name}</p>
+                                    ) : null}
                                 </div>
                             </div>
                             <div>
@@ -115,8 +143,13 @@ export default function SignUp() {
                                         type="email"
                                         placeholder="richard.hendricks@piedpiper.com"
                                         id="email"
-                                        onChange={async (e) => handleChange(e)}
-                                    ></input>
+                                        value={values.email}
+                                        onChange={handleChange}
+                                        onBlur={handleBlur}
+                                    />
+                                    {errors.email && touched.email ? (
+                                        <p className="form-error">{errors.email}</p>
+                                    ) : null}
                                 </div>
                             </div>
                             <div>
@@ -132,8 +165,36 @@ export default function SignUp() {
                                         type="password"
                                         placeholder="***********"
                                         id="password"
-                                        onChange={async (e) => handleChange(e)}
-                                    ></input>
+                                        value={values.password}
+                                        onChange={handleChange}
+                                        onBlur={handleBlur}
+                                    />
+                                    {errors.password && touched.password ? (
+                                        <p className="form-error">{errors.password}</p>
+                                    ) : null}
+                                </div>
+                            </div>
+                            <div>
+                                <div className="flex items-center justify-between">
+                                    <label htmlFor="confirm_password" className="text-base font-medium text-gray-900">
+                                        {' '}
+                                        Confirm Password{' '}
+                                    </label>
+                                </div>
+                                <div className="mt-2">
+                                    <input
+                                        className="flex h-10 w-full rounded-md border border-gray-300 bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
+                                        type="password"
+                                        name="confirm_password"
+                                        id="confirm_password"
+                                        placeholder="Confirm Password"
+                                        value={values.confirm_password}
+                                        onChange={handleChange}
+                                        onBlur={handleBlur}
+                                    />
+                                    {errors.confirm_password && touched.confirm_password ? (
+                                        <p className="form-error">{errors.confirm_password}</p>
+                                    ) : null}
                                 </div>
                             </div>
                             <div>
