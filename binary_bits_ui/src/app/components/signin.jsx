@@ -6,6 +6,8 @@ import axios from "axios";
 import { useContext } from "react";
 import { useRouter } from "next/navigation";
 import { user_data } from "../context";
+import { useFormik } from "formik";
+import { signUpSchema } from "../helpers/yupSchemas";
 
 export default function SignIn() {
   const { setUserName, setUserEmail } = useContext(user_data);
@@ -22,15 +24,6 @@ export default function SignIn() {
       const api = axios.create({
         // Set the base URL for your API requests
         baseURL: "http://localhost:5000",
-
-        // Set the default headers to skip the preflight request
-        headers: {
-          "Content-Type": "application/json",
-          "Access-Control-Allow-Origin": "http://localhost:3000",
-          "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE",
-          "Access-Control-Allow-Headers": "Content-Type",
-          "Access-Control-Allow-Credentials": true,
-        },
         withCredentials: true,
       });
       const res = await api.post(

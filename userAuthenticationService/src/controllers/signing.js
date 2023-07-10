@@ -32,7 +32,7 @@ const register = async (req, res) => {
         .json({ error: "only alphabets allowed of atleast of length 3" });
     }
 
-    await signingService.create(req, res);
+    await signingService.register(req, res);
   } catch (error) {
     console.log("error", error);
     return res.status(500).json({ error: error });
