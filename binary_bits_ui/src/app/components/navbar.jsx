@@ -69,31 +69,21 @@ export default function Navbar() {
                     </ul>
                 </div>
                 <div className="flex grow justify-end">
-                    <button class="inline-flex items-center font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background border border-input hover:bg-accent hover:text-accent-foreground py-2 px-4 relative h-9 w-full justify-start rounded-[0.5rem] text-sm text-muted-foreground sm:pr-12 md:w-40 lg:w-64">
-                        <span class="hidden lg:inline-flex">
+                    <button className="inline-flex items-center font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background border border-input hover:bg-accent hover:text-accent-foreground py-2 px-4 relative h-9 w-full justify-start rounded-[0.5rem] text-sm text-muted-foreground sm:pr-12 md:w-40 lg:w-64">
+                        <span className="hidden lg:inline-flex">
                             Search...
                         </span>
-                        <span class="inline-flex lg:hidden">
+                        <span className="inline-flex lg:hidden">
                             Search...
                         </span>
-                        <kbd class="pointer-events-none absolute right-1.5 top-2 hidden h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium opacity-100 sm:flex">
-                            <span class="text-xs">
+                        <kbd className="pointer-events-none absolute right-1.5 top-2 hidden h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium opacity-100 sm:flex">
+                            <span className="text-xs">
                                 ⌘
                             </span>
                             K
                         </kbd>
                     </button>
                 </div>
-                {/* <div className="ml-2 mt-2 hidden lg:block">
-                    <span className="relative inline-block">
-                        <img
-                            className="h-10 w-10 rounded-full"
-                            src="https://overreacted.io/static/profile-pic-c715447ce38098828758e525a1128b87.jpg"
-                            alt="Dan_Abromov"
-                        />
-                        <span className="absolute bottom-0 right-0 block h-2.5 w-2.5 rounded-full bg-green-600 ring-2 ring-white"></span>
-                    </span>
-                </div> */}
                 <div className="ml-2 mt-2 hidden lg:block">
                     <span className="relative inline-block">
                         <a href="/sign-in">
@@ -160,17 +150,6 @@ export default function Navbar() {
                                         ))}
                                     </nav>
                                 </div>
-                                {/* <div className="ml-3 mt-4 flex items-center space-x-2">
-                                    <img
-                                        className="inline-block h-10 w-10 rounded-full"
-                                        src="https://overreacted.io/static/profile-pic-c715447ce38098828758e525a1128b87.jpg"
-                                        alt="Dan_Abromov"
-                                    />
-                                    <span className="flex flex-col">
-                                        <span className="text-sm font-medium text-gray-900">Dan Abromov</span>
-                                        <span className="text-sm font-medium text-gray-500">@dan_abromov</span>
-                                    </span>
-                                </div> */}
                                 <div className="ml-3 mt-4 flex items-center space-x-2">
                                     <a href="/sign-in">
                                         {userName ? <img

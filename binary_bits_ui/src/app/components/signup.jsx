@@ -7,6 +7,7 @@ import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import { useFormik } from "formik";
 import { signUpSchema } from "../helpers/yupSchemas";
+import toast from 'react-hot-toast';
 
 export default function SignUp() {
 
@@ -17,6 +18,8 @@ export default function SignUp() {
         confirm_password: "",
     };
     const router = useRouter();
+    
+
 
     const { values, handleBlur, handleChange, handleSubmit, errors, touched } =
         useFormik({
@@ -26,23 +29,30 @@ export default function SignUp() {
             validateOnBlur: false,
             //// By disabling validation onChange and onBlur formik will validate on submit.
             onSubmit: async (values, action) => {
+                let tid ;
                 try {
                     const api = axios.create({
                         baseURL: 'http://localhost:5000',
                     });
+                    tid = toast.loading("signing up ...")
                     const res = await api.post('http://localhost:5000/api/user/register', values);
-
                     if (res.status == 201) {
                         // Handle successful signup
                         console.log('Signup successful', res);
-                        router.push('/check-email')
+                        toast.dismiss(tid);
+                        toast.success("sign up success ✌️")
+                        router.push('/')
 
                     } else {
                         // Handle signup failure
                         console.log('Signup failed', res);
+                        toast.dismiss(tid);
+                        toast.error("sign up error occoured 👎",res.error);
                     }
                 } catch (error) {
                     console.error('Error:', error);
+                    toast.dismiss(tid);
+                        toast.error("sign up error occoured 👎",error);
                 }
 
                 console.log(values)
