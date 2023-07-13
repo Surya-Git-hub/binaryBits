@@ -69,11 +69,20 @@ export default function Navbar() {
                     </ul>
                 </div>
                 <div className="flex grow justify-end">
-                    <input
-                        className="flex h-10 w-[250px] rounded-md bg-gray-100 px-3 py-2 text-sm placeholder:text-gray-600 focus:outline-none focus:ring-1 focus:ring-black/30 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
-                        type="text"
-                        placeholder="Search"
-                    ></input>
+                    <button class="inline-flex items-center font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background border border-input hover:bg-accent hover:text-accent-foreground py-2 px-4 relative h-9 w-full justify-start rounded-[0.5rem] text-sm text-muted-foreground sm:pr-12 md:w-40 lg:w-64">
+                        <span class="hidden lg:inline-flex">
+                            Search...
+                        </span>
+                        <span class="inline-flex lg:hidden">
+                            Search...
+                        </span>
+                        <kbd class="pointer-events-none absolute right-1.5 top-2 hidden h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium opacity-100 sm:flex">
+                            <span class="text-xs">
+                                ⌘
+                            </span>
+                            K
+                        </kbd>
+                    </button>
                 </div>
                 {/* <div className="ml-2 mt-2 hidden lg:block">
                     <span className="relative inline-block">
