@@ -53,14 +53,12 @@ export default function SignUp() {
                     } else {
                         // Handle signup failure
                         console.log('Signup failed', res);
-
-                        toast.error("sign up error occoured 👎", {
+                        toast.error("error occured 👎", {
                             id: tid,
                         });
                     }
                 } catch (error) {
                     console.error('Error:', error);
-                    toast.dismiss(tid);
                     toast.error("sign up error occoured 👎", {
                         id: tid,
                     });

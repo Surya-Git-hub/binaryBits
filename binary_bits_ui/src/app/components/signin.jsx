@@ -7,7 +7,7 @@ import { useContext } from "react";
 import { useRouter } from "next/navigation";
 import { user_data } from "../context";
 import { useFormik } from "formik";
-import { signUpSchema } from "../helpers/yupSchemas";
+import { signInSchema } from "../helpers/yupSchemas";
 
 export default function SignIn() {
   const { setUserName, setUserEmail } = useContext(user_data);
@@ -91,6 +91,8 @@ export default function SignIn() {
     }));
     console.log(e.target.id, " ", e.target.value);
   };
+
+
   return (
     <section className="rounded-md bg-black/70 p-2">
       <div className="flex items-center justify-center bg-white px-4 py-10 sm:px-6 sm:py-16 lg:px-8">
@@ -185,14 +187,13 @@ export default function SignIn() {
                 <button
                   type="submit"
                   className="inline-flex w-full items-center justify-center rounded-md bg-black px-3.5 py-2.5 font-semibold leading-7 text-white hover:bg-black/80"
-                  // onClick={handleSubmit}
                 >
-                  Get started <ArrowRight className="ml-2" size={16} />
+                  sign in <ArrowRight className="ml-2" size={16} />
                 </button>
               </div>
             </div>
           </form>
-          <div className="mt-3 space-y-3">
+          {/* <div className="mt-3 space-y-3">
             <button
               onClick={(e) => {
                 handleClick(e);
@@ -228,7 +229,7 @@ export default function SignIn() {
               </span>
               Sign in with Facebook
             </button>
-          </div>
+          </div> */}
         </div>
       </div>
     </section>
