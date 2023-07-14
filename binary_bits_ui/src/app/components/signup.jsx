@@ -18,7 +18,7 @@ export default function SignUp() {
         confirm_password: "",
     };
     const router = useRouter();
-    
+
 
 
     const { values, handleBlur, handleChange, handleSubmit, errors, touched } =
@@ -29,7 +29,7 @@ export default function SignUp() {
             validateOnBlur: false,
             //// By disabling validation onChange and onBlur formik will validate on submit.
             onSubmit: async (values, action) => {
-                let tid ;
+                let tid;
                 try {
                     const api = axios.create({
                         baseURL: 'http://localhost:5000',
@@ -39,20 +39,31 @@ export default function SignUp() {
                     if (res.status == 201) {
                         // Handle successful signup
                         console.log('Signup successful', res);
-                        toast.dismiss(tid);
-                        toast.success("sign up success ✌️")
+                        toast.success("sign up success ✌️", {
+                            id: tid,
+                            duration: 3000,
+                        })
+                        toast.success("check 👉 mail to verify", {
+                            duration: 5000,
+                            icon: '🔥',
+                        })
+
                         router.push('/')
 
                     } else {
                         // Handle signup failure
                         console.log('Signup failed', res);
-                        toast.dismiss(tid);
-                        toast.error("sign up error occoured 👎",res.error);
+
+                        toast.error("sign up error occoured 👎", {
+                            id: tid,
+                        });
                     }
                 } catch (error) {
                     console.error('Error:', error);
                     toast.dismiss(tid);
-                        toast.error("sign up error occoured 👎",error);
+                    toast.error("sign up error occoured 👎", {
+                        id: tid,
+                    });
                 }
 
                 console.log(values)
