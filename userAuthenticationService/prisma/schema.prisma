@@ -41,11 +41,9 @@ model Profile {
   bio          String?
   profilePhoto String?
   profession   String?
-  dob          String?
-  location     String?
+  country     String?
   github       String?
-  socials      String[]
-  organizations String[]
+  organization String?
   user         User      @relation(fields: [userId], references: [id])
   userId       String    @unique @db.ObjectId
   createdAt    DateTime  @default(now())

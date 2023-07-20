@@ -65,7 +65,7 @@
 
 import React from 'react'
 
-export default function Profile() {
+export default function Profile({ name, followers, bio, photo_url, country, github, organization }) {
     return (
         <section className="px-2 py-10 md:px-0">
             <div className="mx-auto max-w-4xl">
@@ -73,22 +73,20 @@ export default function Profile() {
                     <div className="relative h-auto w-48 md:flex md:flex-col flex-shrink-0 items-center justify-center">
                         <img
                             className="relative h-48 w-48 rounded-full object-cover"
-                            src="https://images.unsplash.com/photo-1633332755192-727a05c4013d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8dXNlcnxlbnwwfHwwfHw%3D&auto=format&fit=crop&w=800&q=60"
-                            alt=""
+                            src={photo_url}
+                            alt="profilePhoto"
                         />
                     </div>
-                    <p className="mt-7 text-lg font-semibold text-black text-center">John Doe</p>
-                        <p className="mt-1 text-base text-gray-600 text-center">{733} Followers </p>
-                        <button className= ' px-4 bg-gray-950 text-white rounded-lg'>Follow</button>
-
+                    <p className="mt-7 text-lg font-semibold text-black text-center">{name}</p>
+                    <p className="mt-1 text-base text-gray-600 text-center">{followers} Followers </p>
+                    <button className=' px-4 bg-gray-950 text-white rounded-lg'>Follow</button>
+                    <p>{country}</p>
+                    <p>{github}</p>
+                    <p>{organization}</p>
                     <div className="mt-10 md:mt-0">
                         <blockquote>
-                            <p className="text-xl text-black">
-                                “Lorem ipsum dolor sit amet consectetur adipisicing elit. Quibusdam aliquam repellat
-                                laborum minima tempore deserunt explicabo placeat! Fugit, molestias nesciunt.”
-                            </p>
+                            <p className="text-xl text-black">{bio}</p>
                         </blockquote>
-                        
                     </div>
                 </div>
             </div>
