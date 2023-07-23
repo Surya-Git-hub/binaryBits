@@ -3,6 +3,7 @@
 import React from 'react'
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useFormik } from "formik";
 import axios from 'axios';
 
 
@@ -16,6 +17,49 @@ export default function CreateProfile() {
         profession: '',
         bio: ''
     });
+
+    const initialValues = {
+        file: "",
+        fileDataURL: "",
+        profession: "",
+        bio: "",
+    };
+
+    // useFormik({
+    //     initialValues,
+    //     validateOnChange: true,
+    //     validationOnBlur: false,
+    //     onSubmit: async (values, action) => {
+    //         let tid;
+    //         try {
+    //             const api = axios.create({
+    //                 baseURL: 'http://localhost:5000',
+    //             });
+    //             tid = toast.loading("Updating profile ...")
+    //             const res = await api.post('http://localhost:5000/api/user/register', values);
+    //             if (res.status == 201) {
+    //                 // Handle successful signup
+    //                 console.log('Signup successful', res);
+    //                 toast.success("update success ✌️", {
+    //                     id: tid,
+    //                     duration: 3000,
+    //                 })
+    //                 router.push('/')
+
+    //             } else {
+    //                 console.log('profile creation failed', res);
+    //                 toast.error("error occoured 👎", {
+    //                     id: tid,
+    //                 });
+    //             }
+    //         } catch (error) {
+    //             console.error("Error:", error);
+    //             toast.error("error occured 👎", {
+    //                 id: tid,
+    //             });
+    //         }
+    //     }
+    // })
 
     const handleChange = (e) => {
         e.preventDefault();
@@ -32,22 +76,11 @@ export default function CreateProfile() {
         fData.append("bio", formData.bio);
         fData.append("imageFile", file);
         try {
-            const token = document.cookie.replace(/(?:(?:^|.*;\s*)token\s*=\s*([^;]*).*$)|^.*$/, '$1');
-            const api = await axios.create({
-                // Set the base URL for your API requests
+            const api = axios.create({
                 baseURL: 'http://localhost:5000',
-
-                // Set the default headers to skip the preflight request
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                    'Access-Control-Allow-Origin': 'http://localhost:3000',
-                    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE',
-                    'Access-Control-Allow-Headers': 'Content-Type',
-                    'Access-Control-Allow-Credentials': true,
-                },
-                withCredentials:true,
+                withCredentials: true,
             });
-            const res = await api.post('http://localhost:5000/api/user/create-profile', fData)
+            const res = await api.post('http://localhost:5000/api/user/profile', fData)
 
             if (res.status == 201) {
                 router.push('/')

@@ -1,14 +1,11 @@
 const profileService = require("../services/profile");
 const {
-    isEmailValid,
-    isPassValid,
-    isNameValid,
     hasValue,
 } = require("../helpers");
 
 const create = async (req, res) => {
     try {
-        const { profession, bio, profilePhoto, dob, location, github, socials, organizations } = req.body;
+        const { profession, bio, profilePhoto = "profileurl", dob = "profileurl", location = "profileurl", github = "profileurl", socials = "profileurl", organizations = "profileurl" } = req.body;
         if (!hasValue(profession) && !hasValue(bio) && !hasValue(profilePhoto) && !hasValue(dob) && !hasValue(location) && !hasValue(github) && !hasValue(socials) && !hasValue(organizations)) {
             return res
                 .status(200)
