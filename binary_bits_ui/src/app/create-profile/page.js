@@ -78,6 +78,17 @@ export default function CreateProfile() {
         fData.append("bio", formData.bio);
         fData.append("imageFile", file);
         try {
+
+            const filename = `${uuidv4()}-${fData.file.name}`;
+
+            const { data, error } = await supabase.storage
+                .from("images")
+                .upload(filename, file, {
+                    cacheControl: "3600",
+                    upsert: false,
+                });
+
+            const filepath = data.path;
             const api = axios.create({
                 baseURL: 'http://localhost:5000',
                 withCredentials: true,
