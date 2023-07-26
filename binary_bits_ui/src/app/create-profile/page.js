@@ -7,6 +7,7 @@ import { useFormik } from "formik";
 import axios from 'axios';
 import { createClient } from '@supabase/supabase-js'
 import { v4 as uuidv4 } from "uuid";
+import { supabase } from "@/app/helpers/supa"
 
 
 const imageMimeType = /image\/(png|jpg|jpeg)/i;
@@ -76,19 +77,22 @@ export default function CreateProfile() {
         const fData = new FormData();
         fData.append("profession", formData.profession);
         fData.append("bio", formData.bio);
-        fData.append("imageFile", file);
+        
         try {
 
-            const filename = `${uuidv4()}-${fData.file.name}`;
-
+            const filename = `${uuidv4()}-${file.name}`;
+            console.log("storing the image");
             const { data, error } = await supabase.storage
-                .from("images")
+                .from("ProfilePics")
                 .upload(filename, file, {
                     cacheControl: "3600",
                     upsert: false,
                 });
 
             const filepath = data.path;
+            console.log(filepath)
+            fData.append("imageUrl", filepath);
+
             const api = axios.create({
                 baseURL: 'http://localhost:5000',
                 withCredentials: true,
