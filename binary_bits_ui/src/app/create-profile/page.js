@@ -91,7 +91,7 @@ export default function CreateProfile() {
 
             const filepath = data.path;
             console.log(filepath)
-            fData.append("imageUrl", filepath);
+            fData.append("profilePhoto", filepath);
 
             const api = axios.create({
                 baseURL: 'http://localhost:5000',
