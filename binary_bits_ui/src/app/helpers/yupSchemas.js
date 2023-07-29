@@ -24,3 +24,6 @@ export const signInSchema = Yup.object({
         .matches(/[!@#$%^&*(),.?":{}|<>]/, 'Password must contain at least 1 special character'),
 });
 
+export const signUpEmailSchema = Yup.object({
+    email: Yup.string().email().matches(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, "Emails always have domain in the end").required("Please enter your email")
+});
