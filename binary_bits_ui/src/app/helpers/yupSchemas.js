@@ -28,5 +28,5 @@ export const signUpEmailSchema = Yup.object({
     email: Yup.string().email().matches(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, "Emails always have domain in the end").required("Please enter your email")
 });
 export const signUpTokenSchema = Yup.object({
-    token: Yup.mixed.required("Please enter token recieved on above email")
+    token: Yup.mixed().required("Please enter token recieved on above email")
 });

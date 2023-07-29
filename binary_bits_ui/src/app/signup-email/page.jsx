@@ -5,21 +5,28 @@ import { ArrowRight } from 'lucide-react'
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import { useFormik } from "formik";
-import { signUpEmailSchema } from "../helpers/yupSchemas";
+import { signUpEmailSchema, signUpTokenSchema } from "../helpers/yupSchemas";
 import toast from 'react-hot-toast';
 
 export default function SignUp() {
 
-    const initialValues = {
+    const initialEmail = {
         email: "",
     };
+
+    const initialToken = {
+        token: "",
+    };
+
     const router = useRouter();
 
 
 
-    const { values, handleBlur, handleChange, handleSubmit, errors, touched } =
+    const formikEmail =
         useFormik({
-            initialValues,
+            initialValues : {
+                email: "",
+            },
             validationSchema: signUpEmailSchema,
             validateOnChange: true,
             validateOnBlur: false,
@@ -43,8 +50,6 @@ export default function SignUp() {
                             icon: '🔥',
                         })
 
-                        router.push('/')
-
                     } else {
                         // Handle signup failure
                         console.log('Signup failed', res);
@@ -55,6 +60,54 @@ export default function SignUp() {
                 } catch (error) {
                     console.error('Error:', error);
                     toast.error("sign up error occoured 👎", {
+                        id: tid,
+                    });
+                }
+
+                console.log(values)
+            },
+        });
+
+    const formikToken =
+        useFormik({
+            initialValues : {
+                token: "",
+            },
+            validationSchema: signUpTokenSchema,
+            validateOnChange: true,
+            validateOnBlur: false,
+            onSubmit: async (values, action) => {
+                let tid;
+                try {
+                    const api = axios.create({
+                        baseURL: 'http://localhost:5000',
+                    });
+                    tid = toast.loading("signing up ...")
+                    const res = await api.post('http://localhost:5000/api/user/register-email', values);
+                    if (res.status == 201) {
+                        // Handle successful signup
+                        console.log('Signup successful', res);
+                        toast.success("email sent ✌️", {
+                            id: tid,
+                            duration: 3000,
+                        })
+                        toast.success("check 👉 mail to verify", {
+                            duration: 5000,
+                            icon: '🔥',
+                        })
+
+                        router.push('/')
+
+                    } else {
+                        // Handle signup failure
+                        console.log('mail send failed', res);
+                        toast.error("mail send error occured 👎", {
+                            id: tid,
+                        });
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    toast.error("error occoured 👎", {
                         id: tid,
                     });
                 }
@@ -93,7 +146,7 @@ export default function SignUp() {
                                 Sign In
                             </a>
                         </p>
-                        <form action="#" method="POST" onSubmit={handleSubmit} className="mt-8">
+                        <form action="#" method="POST" onSubmit={formikEmail.handleSubmit} className="mt-8">
                             <div className="space-y-5">
                                 <div>
                                     <label htmlFor="email" className="text-base font-medium text-gray-900">
@@ -106,12 +159,12 @@ export default function SignUp() {
                                             type="email"
                                             placeholder="richard.hendricks@piedpiper.com"
                                             id="email"
-                                            value={values.email}
-                                            onChange={handleChange}
-                                            onBlur={handleBlur}
+                                            value={formikEmail.values.email}
+                                            onChange={formikEmail.handleChange}
+                                            onBlur={formikEmail.handleBlur}
                                         />
-                                        {errors.email && touched.email ? (
-                                            <p className="form-error">{errors.email}</p>
+                                        {formikEmail.errors.email && formikEmail.touched.email ? (
+                                            <p className="form-error">{formikEmail.errors.email}</p>
                                         ) : null}
                                     </div>
                                 </div>
@@ -124,24 +177,27 @@ export default function SignUp() {
                                     </button>
                                 </div>
                             </div>
-                            <div className="space-y-5 mt-5">
+
+                        </form>
+                        <form action="#" method="POST" onSubmit={formikToken.handleSubmit} className="mt-8">
+                            <div className="space-y-5">
                                 <div>
-                                    <label htmlFor="email" className="text-base font-medium text-gray-900">
+                                    <label htmlFor="token" className="text-base font-medium text-gray-900">
                                         {' '}
-                                        Verification Token{' '}
+                                        Token address{' '}
                                     </label>
                                     <div className="mt-2">
                                         <input
                                             className="flex h-10 w-full rounded-md border border-gray-300 bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
                                             type="token"
-                                            placeholder="token"
+                                            placeholder="richard.hendricks@piedpiper.com"
                                             id="token"
-                                            value={values.Token}
-                                            onChange={handleChange}
-                                            onBlur={handleBlur}
+                                            value={formikToken.values.token}
+                                            onChange={formikToken.handleChange}
+                                            onBlur={formikToken.handleBlur}
                                         />
-                                        {errors.token && touched.token ? (
-                                            <p className="form-error">{errors.token}</p>
+                                        {formikToken.errors.token && formikToken.touched.token ? (
+                                            <p className="form-error">{formikToken.errors.token}</p>
                                         ) : null}
                                     </div>
                                 </div>
@@ -150,10 +206,11 @@ export default function SignUp() {
                                         type="submit"
                                         className="inline-flex w-full items-center justify-center rounded-md bg-black px-3.5 py-2.5 font-semibold leading-7 text-white hover:bg-black/80"
                                     >
-                                        Verify <ArrowRight className="ml-2" size={16} />
+                                        Create Account <ArrowRight className="ml-2" size={16} />
                                     </button>
                                 </div>
                             </div>
+
                         </form>
                     </div>
                 </div>
