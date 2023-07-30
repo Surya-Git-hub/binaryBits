@@ -100,7 +100,7 @@ const sendRegisterlink = async (req, res) => {
             const userToInsert = {
                 email,
                 emailVerified: false,
-                hasProfile:false
+                hasProfile: false
             };
             user = await prisma.User.create({ data: userToInsert });
         }
@@ -139,8 +139,12 @@ const verifyToken = async (req, res) => {
                             httpOnly: false,
                             sameSite: "lax",
                         });
+                        return res.status(201).json({
+                            message: "Token verified successfully",
+                            success: true,
+                            redirect: "/",
+                        });
 
-                        res.redirect("/home")
 
                     } else if (user.emailVerified && !user.hasProfile) {
                         res.cookie("token", token, {
@@ -148,8 +152,12 @@ const verifyToken = async (req, res) => {
                             httpOnly: false,
                             sameSite: "lax",
                         });
+                        return res.status(201).json({
+                            message: "Token verified successfully",
+                            success: true,
+                            redirect: "/create-profile",
+                        });
 
-                        res.redirect("/create-profile");
 
                     } else if (!user.emailVerified) {
                         res.cookie("token", token, {
@@ -165,7 +173,11 @@ const verifyToken = async (req, res) => {
                                 emailVerified: true,
                             },
                         });
-                        res.redirect("/create-profile")
+                        return res.status(201).json({
+                            message: "Token verified successfully",
+                            success: true,
+                            redirect: "/create-profile",
+                        });
                     }
                 }
                 else { res.status(401).json({ status: false, message: "authentication failed" }) }
