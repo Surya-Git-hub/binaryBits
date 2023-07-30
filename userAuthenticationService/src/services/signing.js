@@ -1,6 +1,7 @@
 const { Prisma, PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 const { checkDuplicateEmail } = require("../utils/checkDuplicateEmail");
 const { comparePasswords } = require("../utils/comparePasswords");
 const { createJWT } = require("../utils/createJWT");
@@ -91,8 +92,107 @@ const login = async (req, res) => {
     }
 };
 
+const sendRegisterlink = async (req, res) => {
+    try {
+        let { email } = req.body;
+        let user = await checkDuplicateEmail(email);
+        if (!user) {
+            const userToInsert = {
+                email,
+                emailVerified: false,
+                hasProfile: false
+            };
+            user = await prisma.User.create({ data: userToInsert });
+        }
+        const token = await createJWT(user.id);
+        let name = "user"
+        let verificaton = await verifyMail(email, name, token);
+        return res.status(201).json({
+            message: "Token sent successfully",
+            success: true,
+        });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: "internal server error" });
+    }
+}
+
+const verifyToken = async (req, res) => {
+    try {
+        const { token } = req.body
+        if (!token) {
+            return res.status(401).json({ status: false })
+        }
+        jwt.verify(token, process.env.TOKEN_KEY, async (err, data) => {
+            if (err) {
+                res.status(401).json({ status: false })
+            } else {
+                const user = await prisma.User.findUnique({
+                    where: {
+                        id: data.id
+                    }
+                });
+                if (user) {
+                    if (user.emailVerified && user.hasProfile) {
+                        res.cookie("token", token, {
+                            withCredentials: true,
+                            httpOnly: false,
+                            sameSite: "lax",
+                        });
+                        return res.status(201).json({
+                            message: "Token verified successfully",
+                            success: true,
+                            redirect: "/",
+                        });
+
+
+                    } else if (user.emailVerified && !user.hasProfile) {
+                        res.cookie("token", token, {
+                            withCredentials: true,
+                            httpOnly: false,
+                            sameSite: "lax",
+                        });
+                        return res.status(201).json({
+                            message: "Token verified successfully",
+                            success: true,
+                            redirect: "/create-profile",
+                        });
+
+
+                    } else if (!user.emailVerified) {
+                        res.cookie("token", token, {
+                            withCredentials: true,
+                            httpOnly: false,
+                            sameSite: "lax",
+                        });
+                        updatedUser = await prisma.user.update({
+                            where: {
+                                id: user.id,
+                            },
+                            data: {
+                                emailVerified: true,
+                            },
+                        });
+                        return res.status(201).json({
+                            message: "Token verified successfully",
+                            success: true,
+                            redirect: "/create-profile",
+                        });
+                    }
+                }
+                else { res.status(401).json({ status: false, message: "authentication failed" }) }
+            }
+        })
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ error: error });
+    }
+}
+
 
 module.exports = {
     register,
-    login
+    login,
+    sendRegisterlink,
+    verifyToken
 }
