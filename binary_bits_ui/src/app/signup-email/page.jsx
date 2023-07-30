@@ -10,26 +10,16 @@ import toast from 'react-hot-toast';
 
 export default function SignUp() {
 
-    const initialEmail = {
-        email: "",
-    };
-
-    const initialToken = {
-        token: "",
-    };
-
     const router = useRouter();
-
-
 
     const formikEmail =
         useFormik({
-            initialValues : {
+            initialValues: {
                 email: "",
             },
             validationSchema: signUpEmailSchema,
             validateOnChange: true,
-            validateOnBlur: false,
+            validateOnBlur: true,
             onSubmit: async (values, action) => {
                 let tid;
                 try {
@@ -37,7 +27,7 @@ export default function SignUp() {
                         baseURL: 'http://localhost:5000',
                     });
                     tid = toast.loading("signing up ...")
-                    const res = await api.post('http://localhost:5000/api/user/register', values);
+                    const res = await api.post('http://localhost:5000/api/user/register-email', values);
                     if (res.status == 201) {
                         // Handle successful signup
                         console.log('Signup successful', res);
@@ -70,7 +60,7 @@ export default function SignUp() {
 
     const formikToken =
         useFormik({
-            initialValues : {
+            initialValues: {
                 token: "",
             },
             validationSchema: signUpTokenSchema,
