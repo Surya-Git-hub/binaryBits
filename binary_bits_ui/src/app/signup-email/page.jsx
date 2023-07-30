@@ -2,6 +2,7 @@
 
 import React from 'react'
 import { ArrowRight } from 'lucide-react'
+import { useState } from 'react';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import { useFormik } from "formik";
@@ -11,6 +12,8 @@ import toast from 'react-hot-toast';
 export default function SignUp() {
 
     const router = useRouter();
+
+    const [isTokenFormVisible, setTokenFormVisible] = useState(false);
 
     const formikEmail =
         useFormik({
@@ -27,18 +30,19 @@ export default function SignUp() {
                         baseURL: 'http://localhost:5000',
                     });
                     tid = toast.loading("signing up ...")
-                    const res = await api.post('http://localhost:5000/api/user/register-email', values);
+                    const res = await api.post('http://localhost:5000/api/user/register-link', values);
                     if (res.status == 201) {
                         // Handle successful signup
-                        console.log('Signup successful', res);
-                        toast.success("sign up success ✌️", {
+                        console.log('Token send successful', res);
+                        toast.success("Token send success ✌️", {
                             id: tid,
                             duration: 3000,
                         })
-                        toast.success("check 👉 mail to verify", {
+                        toast.success("check 👉 mail for Token", {
                             duration: 5000,
                             icon: '🔥',
                         })
+                        setTokenFormVisible(true);
 
                     } else {
                         // Handle signup failure
@@ -73,7 +77,7 @@ export default function SignUp() {
                         baseURL: 'http://localhost:5000',
                     });
                     tid = toast.loading("signing up ...")
-                    const res = await api.post('http://localhost:5000/api/user/register-email', values);
+                    const res = await api.post('http://localhost:5000/api/user/verifyToken', values);
                     if (res.status == 201) {
                         // Handle successful signup
                         console.log('Signup successful', res);
@@ -86,7 +90,7 @@ export default function SignUp() {
                             icon: '🔥',
                         })
 
-                        router.push('/')
+                        router.push(res.data.redirect);
 
                     } else {
                         // Handle signup failure
@@ -102,7 +106,6 @@ export default function SignUp() {
                     });
                 }
 
-                console.log(values)
             },
         });
 
@@ -158,17 +161,18 @@ export default function SignUp() {
                                         ) : null}
                                     </div>
                                 </div>
-                                <div>
+                                {!isTokenFormVisible &&  <div>
                                     <button
                                         type="submit"
                                         className="inline-flex w-full items-center justify-center rounded-md bg-black px-3.5 py-2.5 font-semibold leading-7 text-white hover:bg-black/80"
                                     >
-                                        Create Account <ArrowRight className="ml-2" size={16} />
+                                        Get Token <ArrowRight className="ml-2" size={16} />
                                     </button>
-                                </div>
+                                </div>}
                             </div>
 
                         </form>
+                        {isTokenFormVisible && 
                         <form action="#" method="POST" onSubmit={formikToken.handleSubmit} className="mt-8">
                             <div className="space-y-5">
                                 <div>
@@ -201,7 +205,7 @@ export default function SignUp() {
                                 </div>
                             </div>
 
-                        </form>
+                        </form>}
                     </div>
                 </div>
             </section>

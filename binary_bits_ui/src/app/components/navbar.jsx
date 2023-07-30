@@ -86,7 +86,7 @@ export default function Navbar() {
                 </div>
                 <div className="ml-2 mt-2 hidden lg:block">
                     <span className="relative inline-block">
-                        <a href="/sign-in">
+                        <a href="/signup-email">
                             {userName ? <img
                                 className="h-10 w-10 rounded-full"
                                 src="https://overreacted.io/static/profile-pic-c715447ce38098828758e525a1128b87.jpg"
@@ -151,7 +151,7 @@ export default function Navbar() {
                                     </nav>
                                 </div>
                                 <div className="ml-3 mt-4 flex items-center space-x-2">
-                                    <a href="/sign-in">
+                                    <a href="/signup-email">
                                         {userName ? <img
                                             className="h-10 w-10 rounded-full"
                                             src="https://overreacted.io/static/profile-pic-c715447ce38098828758e525a1128b87.jpg"
