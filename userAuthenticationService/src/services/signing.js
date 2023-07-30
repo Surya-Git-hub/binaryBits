@@ -1,6 +1,7 @@
 const { Prisma, PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 const { checkDuplicateEmail } = require("../utils/checkDuplicateEmail");
 const { comparePasswords } = require("../utils/comparePasswords");
 const { createJWT } = require("../utils/createJWT");
@@ -99,6 +100,7 @@ const sendRegisterlink = async (req, res) => {
             const userToInsert = {
                 email,
                 emailVerified: false,
+                hasProfile:false
             };
             user = await prisma.User.create({ data: userToInsert });
         }
