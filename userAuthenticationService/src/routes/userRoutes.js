@@ -11,10 +11,13 @@ const router = express.Router();
 //signing routes
 router.post("/register", signingController.register);
 router.post("/login", signingController.login);
+router.post("/register-link",signingController.sendRegisterlink);
+router.post("/verifyToken",signingController.verifyToken)
 
 //magic link routes
 router.post("/magic-login", magicController.login);
 router.get("/verify-magic-link", magicController.verifyLink);
+
 
 //profile routes
 router.get("/profile:userId", profileController.get);
