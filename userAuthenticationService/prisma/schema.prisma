@@ -18,6 +18,7 @@ model User {
   emailVerified  Boolean   @default(false)
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
+  hasProfile     Boolean
   profile        Profile?
   posts          Post[]
   comments       Comment[]
@@ -37,17 +38,17 @@ model User {
 }
 
 model Profile {
-  id           String    @id @default(auto()) @map("_id") @db.ObjectId
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
   bio          String?
   profilePhoto String?
   profession   String?
-  country     String?
+  country      String?
   github       String?
   organization String?
-  user         User      @relation(fields: [userId], references: [id])
-  userId       String    @unique @db.ObjectId
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
+  user         User     @relation(fields: [userId], references: [id])
+  userId       String   @unique @db.ObjectId
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 }
 
 model Post {
