@@ -4,7 +4,7 @@ import { Menu, X, ChevronDown, ChevronRight, VenetianMask } from 'lucide-react'
 import { Link } from 'next/link';
 import { useContext, useState } from 'react';
 import { useRouter } from 'next/router';
-import { user_data } from '../context';
+import { authContext } from '../context';
 
 const menuItems = [
     {
@@ -23,7 +23,7 @@ const menuItems = [
 
 export default function Navbar() {
     const [isMenuOpen, setIsMenuOpen] = useState(false)
-    const { userName, setUserName, userEmail, setUserEmail } = useContext(user_data);
+    const { auth,setAuth } = useContext(authContext);
 
     const toggleMenu = () => {
         setIsMenuOpen(!isMenuOpen)
@@ -87,7 +87,7 @@ export default function Navbar() {
                 <div className="ml-2 mt-2 hidden lg:block">
                     <span className="relative inline-block">
                         <a href="/signup-email">
-                            {userName ? <img
+                            {auth.id? <img
                                 className="h-10 w-10 rounded-full"
                                 src="https://overreacted.io/static/profile-pic-c715447ce38098828758e525a1128b87.jpg"
                                 alt="Dan_Abromov"
@@ -152,7 +152,7 @@ export default function Navbar() {
                                 </div>
                                 <div className="ml-3 mt-4 flex items-center space-x-2">
                                     <a href="/signup-email">
-                                        {userName ? <img
+                                        {auth.id ? <img
                                             className="h-10 w-10 rounded-full"
                                             src="https://overreacted.io/static/profile-pic-c715447ce38098828758e525a1128b87.jpg"
                                             alt="Dan_Abromov"

@@ -81,15 +81,10 @@ export default function SignUp() {
                     if (res.status == 201) {
                         // Handle successful signup
                         console.log('Signup successful', res);
-                        toast.success("email sent ✌️", {
+                        toast.success("logged in succesfully ✌️", {
                             id: tid,
                             duration: 3000,
                         })
-                        toast.success("check 👉 mail to verify", {
-                            duration: 5000,
-                            icon: '🔥',
-                        })
-
                         router.push(res.data.redirect);
 
                     } else {

@@ -21,48 +21,22 @@ export default function CreateProfile() {
         bio: ''
     });
 
-    const initialValues = {
-        file: "",
-        fileDataURL: "",
-        profession: "",
-        bio: "",
-    };
-
-    // useFormik({
-    //     initialValues,
-    //     validateOnChange: true,
-    //     validationOnBlur: false,
-    //     onSubmit: async (values, action) => {
-    //         let tid;
-    //         try {
-    //             const api = axios.create({
-    //                 baseURL: 'http://localhost:5000',
-    //             });
-    //             tid = toast.loading("Updating profile ...")
-    //             const res = await api.post('http://localhost:5000/api/user/register', values);
-    //             if (res.status == 201) {
-    //                 // Handle successful signup
-    //                 console.log('Signup successful', res);
-    //                 toast.success("update success ✌️", {
-    //                     id: tid,
-    //                     duration: 3000,
-    //                 })
-    //                 router.push('/')
-
-    //             } else {
-    //                 console.log('profile creation failed', res);
-    //                 toast.error("error occoured 👎", {
-    //                     id: tid,
-    //                 });
-    //             }
-    //         } catch (error) {
-    //             console.error("Error:", error);
-    //             toast.error("error occured 👎", {
-    //                 id: tid,
-    //             });
-    //         }
-    //     }
-    // })
+    // const formik = useFormik({
+    //     initialValues: {
+    //       name: '',
+    //       profession: '',
+    //       bio:'',
+    //       country: '',
+    //       github: '',
+    //       organization: '',
+    //       file:"",
+    //     },
+    //     validationSchema,
+    //     onSubmit: (values) => {
+    //       // Handle form submission
+    //       console.log(values);
+    //     },
+    //   });
 
     const handleChange = (e) => {
         e.preventDefault();
@@ -147,23 +121,36 @@ export default function CreateProfile() {
             <div className="mx-auto my-4 max-w-2xl md:my-6">
                 {/* Form */}
                 <div className="overflow-hidden rounded-xl bg-white p-4 shadow">
-                    <h3 className="text-sm font-bold font-large text-gray-900 lg:px-8">Provide Personal Info</h3>
-                    <div className="flex items-center space-x-2 m-5">
+                    <h3 className="text-lg font-bold font-large text-gray-900 text-center lg:px-8">Provide Personal Info</h3>
+                    <div className="flex flex-row items-center space-x-2 m-5 justify-center">
                         {fileDataURL ?
                             <img
-                                className="inline-block h-12 w-12 rounded-full"
+                                className="inline-block h-28 w-28 rounded-full"
                                 src={fileDataURL}
                                 alt="Dan_Abromov"
                             /> : <img
-                                className="inline-block h-12 w-12 rounded-full"
+                                className="inline-block h-28 w-28 rounded-full"
                                 src="https://overreacted.io/static/profile-pic-c715447ce38098828758e525a1128b87.jpg"
                                 alt="Dan_Abromov"
                             />}
 
-
-                        <span className="text-sm font-medium text-gray-900">{"Dan Abromov"}</span>
                     </div>
-                    <div className="mt-6 gap-6 space-y-4 md:grid md:grid md:space-y-0">
+                    <div className="mt-6 gap-6 space-y-4 md:grid md:space-y-0">
+                    <div className="w-full">
+                            <label
+                                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                htmlFor="Name"
+                            >
+                                Name
+                            </label>
+                            <input
+                                className="flex h-10 w-full rounded-md border border-black/30 bg-transparent px-3 py-2 text-sm placeholder:text-gray-600 focus:outline-none focus:ring-1 focus:ring-black/30 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
+                                type="text"
+                                placeholder="Enter your Name"
+                                id="Name"
+                                onChange={(e) => { handleChange(e) }}
+                            ></input>
+                        </div>
                         <div className="w-full">
                             <label
                                 className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
