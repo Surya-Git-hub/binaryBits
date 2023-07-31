@@ -51,7 +51,7 @@ export default function CreateProfile() {
         const fData = new FormData();
         fData.append("profession", formData.profession);
         fData.append("bio", formData.bio);
-        
+
         try {
 
             const filename = `${uuidv4()}-${file.name}`;
@@ -135,84 +135,133 @@ export default function CreateProfile() {
                             />}
 
                     </div>
-                    <div className="mt-6 gap-6 space-y-4 md:grid md:space-y-0">
-                    <div className="w-full">
-                            <label
-                                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                                htmlFor="Name"
-                            >
-                                Name
-                            </label>
-                            <input
-                                className="flex h-10 w-full rounded-md border border-black/30 bg-transparent px-3 py-2 text-sm placeholder:text-gray-600 focus:outline-none focus:ring-1 focus:ring-black/30 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
-                                type="text"
-                                placeholder="Enter your Name"
-                                id="Name"
-                                onChange={(e) => { handleChange(e) }}
-                            ></input>
-                        </div>
-                        <div className="w-full">
-                            <label
-                                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                                htmlFor="profession"
-                            >
-                                Profession
-                            </label>
-                            <input
-                                className="flex h-10 w-full rounded-md border border-black/30 bg-transparent px-3 py-2 text-sm placeholder:text-gray-600 focus:outline-none focus:ring-1 focus:ring-black/30 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
-                                type="text"
-                                placeholder="Enter your profession"
-                                id="profession"
-                                onChange={(e) => { handleChange(e) }}
-                            ></input>
-                        </div>
-                        <div className="col-span-2 grid">
+                    <form>
+                        <div className="mt-6 gap-6 space-y-4 md:grid md:space-y-0">
                             <div className="w-full">
                                 <label
                                     className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                                    htmlFor="bio"
+                                    htmlFor="Name"
                                 >
-                                    Bio
+                                    Name
                                 </label>
-                                <textarea
-                                    className="flex h-40 w-full rounded-md border border-black/30 bg-transparent px-3 py-2 text-sm placeholder:text-gray-600 focus:outline-none focus:ring-1 focus:ring-black/30 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
+                                <input
+                                    className="flex h-10 w-full rounded-md border border-black/30 bg-transparent px-3 py-2 text-sm placeholder:text-gray-600 focus:outline-none focus:ring-1 focus:ring-black/30 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
                                     type="text"
-                                    placeholder="Tell us about yourself"
-                                    id="bio"
+                                    placeholder="Enter your Name"
+                                    id="Name"
                                     onChange={(e) => { handleChange(e) }}
-                                ></textarea>
+                                ></input>
                             </div>
-                        </div>
-                        <div className='col-span-2 grid'>
                             <div className="w-full">
                                 <label
                                     className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                                    htmlFor="bio"
+                                    htmlFor="profession"
                                 >
-                                    Upload Profile Picture
+                                    Profession
                                 </label>
-                                <div className="flex items-center justify-center w-full">
-                                    <label htmlFor="dropzone-file" className="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600">
-                                        <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                                            <svg aria-hidden="true" className="w-10 h-10 mb-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
-                                            <p className="mb-2 text-sm text-gray-500 dark:text-gray-400"><span className="font-semibold">Click to upload profile pic</span> or drag and drop profile pic</p>
-                                            <p className="text-xs text-gray-500 dark:text-gray-400">SVG, PNG, JPG or GIF (MAX. 800x400px)</p>
-                                        </div>
-                                        <input id="dropzone-file" type="file" accept="image/*" className="hidden" onChange={changeHandler} />
+                                <input
+                                    className="flex h-10 w-full rounded-md border border-black/30 bg-transparent px-3 py-2 text-sm placeholder:text-gray-600 focus:outline-none focus:ring-1 focus:ring-black/30 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
+                                    type="text"
+                                    placeholder="Enter your profession"
+                                    id="profession"
+                                    onChange={(e) => { handleChange(e) }}
+                                ></input>
+                            </div>
+                            <div className="col-span-2 grid">
+                                <div className="w-full">
+                                    <label
+                                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                        htmlFor="bio"
+                                    >
+                                        Bio
                                     </label>
+                                    <textarea
+                                        className="flex h-40 w-full rounded-md border border-black/30 bg-transparent px-3 py-2 text-sm placeholder:text-gray-600 focus:outline-none focus:ring-1 focus:ring-black/30 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
+                                        type="text"
+                                        placeholder="Tell us about yourself"
+                                        id="bio"
+                                        onChange={(e) => { handleChange(e) }}
+                                    ></textarea>
                                 </div>
                             </div>
+                            <div className="w-full">
+                                <label
+                                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                    htmlFor="Country"
+                                >
+                                    Country
+                                </label>
+                                <input
+                                    className="flex h-10 w-full rounded-md border border-black/30 bg-transparent px-3 py-2 text-sm placeholder:text-gray-600 focus:outline-none focus:ring-1 focus:ring-black/30 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
+                                    type="text"
+                                    placeholder="Enter your Country"
+                                    id="Country"
+                                    onChange={(e) => { handleChange(e) }}
+                                ></input>
+                            </div>
+                            <div className="w-full">
+                                <label
+                                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                    htmlFor="githubProfile"
+                                >
+                                    Github Profile
+                                </label>
+                                <input
+                                    className="flex h-10 w-full rounded-md border border-black/30 bg-transparent px-3 py-2 text-sm placeholder:text-gray-600 focus:outline-none focus:ring-1 focus:ring-black/30 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
+                                    type="text"
+                                    placeholder="Enter your Github Profile"
+                                    id="githubProfile"
+                                    onChange={(e) => { handleChange(e) }}
+                                ></input>
+                            </div>
+                            <div className='col-span-2 grid'>
+                                <div className="w-full">
+                                    <label
+                                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                        htmlFor="Organization"
+                                    >
+                                        Organization
+                                    </label>
+                                    <input
+                                        className="flex h-10 w-full rounded-md border border-black/30 bg-transparent px-3 py-2 text-sm placeholder:text-gray-600 focus:outline-none focus:ring-1 focus:ring-black/30 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
+                                        type="text"
+                                        placeholder="Enter your Organization"
+                                        id="Organization"
+                                        onChange={(e) => { handleChange(e) }}
+                                    ></input>
+                                </div>
+                            </div>
+                            <div className='col-span-2 grid'>
+                                <div className="w-full">
+                                    <label
+                                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                        htmlFor="bio"
+                                    >
+                                        Upload Profile Picture
+                                    </label>
+                                    <div className="flex items-center justify-center w-full">
+                                        <label htmlFor="dropzone-file" className="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600">
+                                            <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                                                <svg aria-hidden="true" className="w-10 h-10 mb-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
+                                                <p className="mb-2 text-sm text-gray-500 dark:text-gray-400"><span className="font-semibold">Click to upload profile pic</span> or drag and drop profile pic</p>
+                                                <p className="text-xs text-gray-500 dark:text-gray-400">SVG, PNG, JPG or GIF (MAX. 800x400px)</p>
+                                            </div>
+                                            <input id="dropzone-file" type="file" accept="image/*" className="hidden" onChange={changeHandler} />
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="col-span-2 grid">
+                                <button
+                                    type="button"
+                                    className="w-full rounded-md bg-black px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-black/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
+                                    onClick={(e) => { handleClick(e) }}
+                                >
+                                    Save
+                                </button>
+                            </div>
                         </div>
-                        <div className="col-span-2 grid">
-                            <button
-                                type="button"
-                                className="w-full rounded-md bg-black px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-black/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
-                                onClick={(e) => { handleClick(e) }}
-                            >
-                                Save
-                            </button>
-                        </div>
-                    </div>
+                    </form>
                 </div>
             </div>
         </div>
