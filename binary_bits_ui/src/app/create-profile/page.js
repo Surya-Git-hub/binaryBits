@@ -8,6 +8,7 @@ import axios from 'axios';
 import { createClient } from '@supabase/supabase-js'
 import { v4 as uuidv4 } from "uuid";
 import { supabase } from "@/app/helpers/supa"
+import { profileSchema } from "@/app/helpers/yupSchemas"
 
 
 const imageMimeType = /image\/(png|jpg|jpeg)/i;
@@ -18,25 +19,27 @@ export default function CreateProfile() {
     const [fileDataURL, setFileDataURL] = useState(null);
     const [formData, setFormData] = useState({
         profession: '',
-        bio: ''
+        bio: '',
     });
 
-    // const formik = useFormik({
-    //     initialValues: {
-    //       name: '',
-    //       profession: '',
-    //       bio:'',
-    //       country: '',
-    //       github: '',
-    //       organization: '',
-    //       file:"",
-    //     },
-    //     validationSchema,
-    //     onSubmit: (values) => {
-    //       // Handle form submission
-    //       console.log(values);
-    //     },
-    //   });
+    const formik = useFormik({
+        initialValues: {
+            name: '',
+            profession: '',
+            bio: '',
+            country: '',
+            github: '',
+            organization: '',
+            file: "",
+        },
+        validationSchema: profileSchema,
+        validateOnChange: true,
+        validateOnBlur: false,
+        onSubmit: (values) => {
+            // Handle form submission
+            console.log(values);
+        },
+    });
 
     const handleChange = (e) => {
         e.preventDefault();
@@ -119,7 +122,6 @@ export default function CreateProfile() {
     return (
         <div className="mx-auto w-full max-w-7xl bg-slate-100 py-2">
             <div className="mx-auto my-4 max-w-2xl md:my-6">
-                {/* Form */}
                 <div className="overflow-hidden rounded-xl bg-white p-4 shadow">
                     <h3 className="text-lg font-bold font-large text-gray-900 text-center lg:px-8">Provide Personal Info</h3>
                     <div className="flex flex-row items-center space-x-2 m-5 justify-center">
@@ -135,22 +137,27 @@ export default function CreateProfile() {
                             />}
 
                     </div>
-                    <form>
+                    {/* Form */}
+                    <form onSubmit={formik.handleSubmit}>
                         <div className="mt-6 gap-6 space-y-4 md:grid md:space-y-0">
                             <div className="w-full">
                                 <label
                                     className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                                    htmlFor="Name"
+                                    htmlFor="name"
                                 >
                                     Name
                                 </label>
                                 <input
                                     className="flex h-10 w-full rounded-md border border-black/30 bg-transparent px-3 py-2 text-sm placeholder:text-gray-600 focus:outline-none focus:ring-1 focus:ring-black/30 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
-                                    type="text"
+                                    type="name"
                                     placeholder="Enter your Name"
-                                    id="Name"
-                                    onChange={(e) => { handleChange(e) }}
+                                    id="name"
+                                    onChange={formik.handleChange}
+                                    onBlur={formik.handleBlur}
                                 ></input>
+                                {formik.touched.name && formik.errors.name ? (
+                                    <p className="form-error">{formik.errors.name}</p>
+                                ) : null}
                             </div>
                             <div className="w-full">
                                 <label
@@ -161,10 +168,11 @@ export default function CreateProfile() {
                                 </label>
                                 <input
                                     className="flex h-10 w-full rounded-md border border-black/30 bg-transparent px-3 py-2 text-sm placeholder:text-gray-600 focus:outline-none focus:ring-1 focus:ring-black/30 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
-                                    type="text"
+                                    type="profession"
                                     placeholder="Enter your profession"
                                     id="profession"
-                                    onChange={(e) => { handleChange(e) }}
+                                    onChange={formik.handleChange}
+                                    onBlur={formik.handleBlur}
                                 ></input>
                             </div>
                             <div className="col-span-2 grid">
@@ -180,7 +188,8 @@ export default function CreateProfile() {
                                         type="text"
                                         placeholder="Tell us about yourself"
                                         id="bio"
-                                        onChange={(e) => { handleChange(e) }}
+                                        onChange={formik.handleChange}
+                                        onBlur={formik.handleBlur}
                                     ></textarea>
                                 </div>
                             </div>
@@ -196,7 +205,8 @@ export default function CreateProfile() {
                                     type="text"
                                     placeholder="Enter your Country"
                                     id="Country"
-                                    onChange={(e) => { handleChange(e) }}
+                                    onChange={formik.handleChange}
+                                    onBlur={formik.handleBlur}
                                 ></input>
                             </div>
                             <div className="w-full">
@@ -211,7 +221,8 @@ export default function CreateProfile() {
                                     type="text"
                                     placeholder="Enter your Github Profile"
                                     id="githubProfile"
-                                    onChange={(e) => { handleChange(e) }}
+                                    onChange={formik.handleChange}
+                                    onBlur={formik.handleBlur}
                                 ></input>
                             </div>
                             <div className='col-span-2 grid'>
@@ -227,7 +238,8 @@ export default function CreateProfile() {
                                         type="text"
                                         placeholder="Enter your Organization"
                                         id="Organization"
-                                        onChange={(e) => { handleChange(e) }}
+                                        onChange={formik.handleChange}
+                                        onBlur={formik.handleBlur}
                                     ></input>
                                 </div>
                             </div>
@@ -253,7 +265,7 @@ export default function CreateProfile() {
                             </div>
                             <div className="col-span-2 grid">
                                 <button
-                                    type="button"
+                                    type="submit"
                                     className="w-full rounded-md bg-black px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-black/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
                                     onClick={(e) => { handleClick(e) }}
                                 >
