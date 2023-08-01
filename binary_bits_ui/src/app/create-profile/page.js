@@ -1,14 +1,15 @@
+
 "use client"
 
 import React from 'react'
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useFormik } from "formik";
 import axios from 'axios';
-import { createClient } from '@supabase/supabase-js'
 import { v4 as uuidv4 } from "uuid";
 import { supabase } from "@/app/helpers/supa"
 import { profileSchema } from "@/app/helpers/yupSchemas"
+import {useForm} from "react-hook-form";
+
 
 
 const imageMimeType = /image\/(png|jpg|jpeg)/i;
@@ -22,24 +23,7 @@ export default function CreateProfile() {
         bio: '',
     });
 
-    const formik = useFormik({
-        initialValues: {
-            name: '',
-            profession: '',
-            bio: '',
-            country: '',
-            github: '',
-            organization: '',
-            file: "",
-        },
-        validationSchema: profileSchema,
-        validateOnChange: true,
-        validateOnBlur: false,
-        onSubmit: (values) => {
-            // Handle form submission
-            console.log(values);
-        },
-    });
+    
 
     const handleChange = (e) => {
         e.preventDefault();
@@ -118,6 +102,15 @@ export default function CreateProfile() {
 
     }, [file]);
 
+    const {
+        register,
+        handleSubmit,
+        watch,
+        formState: { errors },
+      } = useForm()
+
+      const onSubmit = (data) => console.log(data)
+      console.log(watch("example"))
 
     return (
         <div className="mx-auto w-full max-w-7xl bg-slate-100 py-2">
@@ -138,7 +131,7 @@ export default function CreateProfile() {
 
                     </div>
                     {/* Form */}
-                    <form onSubmit={formik.handleSubmit}>
+                    <form onSubmit={handleSubmit(onSubmit)}>
                         <div className="mt-6 gap-6 space-y-4 md:grid md:space-y-0">
                             <div className="w-full">
                                 <label
@@ -152,6 +145,7 @@ export default function CreateProfile() {
                                     type="name"
                                     placeholder="Enter your Name"
                                     id="name"
+                                    {...register("name")}
                                     onChange={formik.handleChange}
                                     onBlur={formik.handleBlur}
                                 ></input>
