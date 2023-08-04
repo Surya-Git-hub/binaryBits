@@ -1,16 +1,18 @@
 "use client"
 import { createContext, useState } from "react";
-export const user_data = createContext(null);
+export const authContext = createContext(null);
 function Context({ children }) {
-    const [userName, setUserName] = useState();
-    const [userEmail, setUserEmail] = useState();
+  const [auth, setAuth] = useState({
+    status: false,
+    id: ""
+  });
 
-  
-    return (
-      <user_data.Provider value={{ userName,userEmail,setUserName,setUserEmail }}>
-        {children}
-      </user_data.Provider>
-    );
-  }
+
+  return (
+    <authContext.Provider value={{ auth, setAuth }}>
+      {children}
+    </authContext.Provider>
+  );
+}
 
 export default Context;

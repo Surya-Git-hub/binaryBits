@@ -30,3 +30,19 @@ export const signUpEmailSchema = Yup.object({
 export const signUpTokenSchema = Yup.object({
     token: Yup.mixed().required("Please enter token recieved on above email")
 });
+
+const githubProfileRegex = /(?:https?:\/\/)?(?:www\.)?github\.com\/([A-Za-z0-9_-]+)/;
+
+export const profileSchema = Yup.object({
+    name: Yup.string().required('Name is required'),
+    profession: Yup.string().required('Profession is required'),
+    bio: Yup.string().required('Bio is required'),
+    country: Yup.string().required('Country is required'),
+    github: Yup.string().url('Invalid GitHub URL').matches(githubProfileRegex, "Invalid GitHub URL"),
+    organization: Yup.string().required('Organization is required'),
+    file: Yup.mixed().required('Please upload a file').test(
+        'fileSize',
+        'File size is too large',
+        (value) => value && value.size <= 5000000 // 5MB
+    )
+});
