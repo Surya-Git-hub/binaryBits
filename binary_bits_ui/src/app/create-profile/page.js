@@ -1,4 +1,3 @@
-
 "use client"
 
 import React from 'react'
@@ -19,42 +18,25 @@ export default function CreateProfile() {
     const router = useRouter();
     const [file, setFile] = useState(null);
     const [fileDataURL, setFileDataURL] = useState(null);
-    // const [formData, setFormData] = useState({
-    //     profession: '',
-    //     bio: '',
-    // });
-
-
-
-    // const handleChange = (e) => {
-    //     e.preventDefault();
-    //     setFormData((prevData) => ({
-    //         ...prevData,
-    //         [e.target.id]: e.target.value
-    //     }));
-    // };
 
     const handleClick = async (fdata) => {
-        // e.preventDefault();
-        // const fData = new FormData();
-        // fData.append("profession", formData.profession);
-        // fData.append("bio", formData.bio);
-
         try {
-
             const filename = `${uuidv4()}-${file.name}`;
-            console.log("storing the image",fdata);
+            // console.log("storing the image", fdata);
             const { data, error } = await supabase.storage
                 .from("ProfilePics")
                 .upload(filename, file, {
                     cacheControl: "3600",
                     upsert: false,
                 });
+            // console.log(data, "supa");
+            const imgData = await supabase
+                .storage
+                .from("ProfilePics")
+                .getPublicUrl(data.path)
 
-            const filepath = data.path;
-            console.log(filepath)
-            // fData.append("profilePhoto", filepath);
-            fdata.profilePhoto=filepath;
+            console.log(imgData, "supa2");
+            fdata.profilePhoto = imgData.data.publicUrl;
 
             const api = axios.create({
                 baseURL: 'http://localhost:5000',
@@ -108,14 +90,13 @@ export default function CreateProfile() {
     const {
         register,
         handleSubmit,
-        watch,
         formState: { errors },
     } = useForm({
         resolver: yupResolver(profileSchema),
     })
 
-    const onSubmit = (data) => {console.log(data,errors)
-        // console.log(watch())
+    const onSubmit = (data) => {
+        console.log(data, errors)
         handleClick(data);
     }
 
@@ -153,11 +134,11 @@ export default function CreateProfile() {
                                     placeholder="Enter your Name"
                                     id="name"
                                     {...register("name")}
+                                >
 
-
-                                ></input>
+                                </input>
                                 {
-                                    <p className="form-error"></p>
+                                    <p className="form-error">{errors.name}</p>
                                 }
                             </div>
                             <div className="w-full">
@@ -172,8 +153,6 @@ export default function CreateProfile() {
                                     type="profession"
                                     placeholder="Enter your profession"
                                     id="profession"
-
-
                                     {...register("profession")}
                                 ></input>
                             </div>
@@ -190,8 +169,6 @@ export default function CreateProfile() {
                                         type="text"
                                         placeholder="Tell us about yourself"
                                         id="bio"
-
-
                                         {...register("bio")}
                                     ></textarea>
                                 </div>
@@ -208,8 +185,6 @@ export default function CreateProfile() {
                                     type="text"
                                     placeholder="Enter your Country"
                                     id="Country"
-
-
                                     {...register("country")}
                                 ></input>
                             </div>
@@ -225,8 +200,6 @@ export default function CreateProfile() {
                                     type="text"
                                     placeholder="Enter your Github Profile"
                                     id="githubProfile"
-
-
                                     {...register("githubProfile")}
                                 ></input>
                             </div>
@@ -273,7 +246,6 @@ export default function CreateProfile() {
                                 <button
                                     type="submit"
                                     className="w-full rounded-md bg-black px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-black/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
-                                // onClick={(e) => { handleClick(e) }}
                                 >
                                     Save
                                 </button>
