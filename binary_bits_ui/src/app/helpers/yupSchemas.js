@@ -44,7 +44,7 @@ export const profileSchema = Yup.object({
         'File size is too large',
         (value) => {
             // console.log(value,"yup");
-            return (value && value[0].size <= 5000000)
+            return (value && value[0]?.size <= 5000000)
         } // 5MB
     )
 });
