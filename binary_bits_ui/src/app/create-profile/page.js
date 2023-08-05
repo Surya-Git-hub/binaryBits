@@ -35,7 +35,6 @@ export default function CreateProfile() {
                 .from("ProfilePics")
                 .getPublicUrl(data.path)
 
-            console.log(imgData, "supa2");
             fdata.profilePhoto = imgData.data.publicUrl;
 
             const api = axios.create({
@@ -57,7 +56,6 @@ export default function CreateProfile() {
     }
 
     const changeHandler = (e) => {
-        console.log("calling change handler")
         const file = e.target.files[0];
         if (!file.type.match(imageMimeType)) {
             alert("Image mime type is not valid");
@@ -96,7 +94,6 @@ export default function CreateProfile() {
     })
 
     const onSubmit = (data) => {
-        console.log(data, errors)
         handleClick(data);
     }
 
@@ -137,9 +134,8 @@ export default function CreateProfile() {
                                 >
 
                                 </input>
-                                {
-                                    <p className="form-error">{errors.name}</p>
-                                }
+                                <p className="text-red-600 ">{errors.name?.message}</p>
+
                             </div>
                             <div className="w-full">
                                 <label
@@ -155,6 +151,7 @@ export default function CreateProfile() {
                                     id="profession"
                                     {...register("profession")}
                                 ></input>
+                                <p className="text-red-600 ">{errors.profession?.message}</p>
                             </div>
                             <div className="col-span-2 grid">
                                 <div className="w-full">
@@ -171,6 +168,7 @@ export default function CreateProfile() {
                                         id="bio"
                                         {...register("bio")}
                                     ></textarea>
+                                    <p className="text-red-600 ">{errors.bio?.message}</p>
                                 </div>
                             </div>
                             <div className="w-full">
@@ -187,6 +185,7 @@ export default function CreateProfile() {
                                     id="Country"
                                     {...register("country")}
                                 ></input>
+                                <p className="text-red-600 ">{errors.country?.message}</p>
                             </div>
                             <div className="w-full">
                                 <label
@@ -202,6 +201,7 @@ export default function CreateProfile() {
                                     id="githubProfile"
                                     {...register("githubProfile")}
                                 ></input>
+                                <p className="text-red-600 ">{errors.githubProfile?.message}</p>
                             </div>
                             <div className='col-span-2 grid'>
                                 <div className="w-full">
@@ -216,17 +216,16 @@ export default function CreateProfile() {
                                         type="text"
                                         placeholder="Enter your Organization"
                                         id="Organization"
-
-
                                         {...register("organization")}
                                     ></input>
+                                    <p className="text-red-600 ">{errors.organization?.message}</p>
                                 </div>
                             </div>
                             <div className='col-span-2 grid'>
                                 <div className="w-full">
                                     <label
                                         className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                                        htmlFor="bio"
+                                        htmlFor="file"
                                     >
                                         Upload Profile Picture
                                     </label>
@@ -240,6 +239,7 @@ export default function CreateProfile() {
                                             <input id="dropzone-file" type="file" accept="image/*" className="hidden" {...register("profilePhoto", { onChange: changeHandler })} />
                                         </label>
                                     </div>
+                                    <p className="text-red-600 ">{errors.file?.message}</p>
                                 </div>
                             </div>
                             <div className="col-span-2 grid">
