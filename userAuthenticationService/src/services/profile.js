@@ -4,18 +4,33 @@ const prisma = new PrismaClient();
 
 const create = async (req, res) => {
   try {
-    const { profession, bio, profilePhoto, dob, location, github, socials, organizations } = req.body;
+    const { name, profession, bio, country, organization, profilePhoto, githubProfile } = req.body;
+    // console.log(name);
     const profileToInsert = {
-      profession, bio, profilePhoto, dob, location, github, socials, organizations, userId: req.body.id
+      profession, bio, country, profilePhoto, github: githubProfile, organization,
     };
     const createdProfile = await prisma.profile.create({
-      data: profileToInsert,
+      data: {
+        ...profileToInsert,
+        user: {
+          connect: { id: req.body.id },
+        },
+      },
+    });
+
+    // Update the 'hasProfile' field in the user model to true
+    let userUpdated = await prisma.user.update({
+      where: { id: req.body.id },
+      data: {
+        hasProfile: true,
+        name: name,
+      },
     });
 
     return res.status(201).json({
       message: "User profile created successfully",
       success: true,
-      createdProfile,
+      createdProfile, userUpdated
     });
   } catch (error) {
     console.error(error);

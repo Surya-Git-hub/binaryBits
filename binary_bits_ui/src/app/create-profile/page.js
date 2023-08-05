@@ -1,4 +1,3 @@
-
 "use client"
 
 import React from 'react'
@@ -8,7 +7,8 @@ import axios from 'axios';
 import { v4 as uuidv4 } from "uuid";
 import { supabase } from "@/app/helpers/supa"
 import { profileSchema } from "@/app/helpers/yupSchemas"
-import {useForm} from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup"
+import { useForm } from "react-hook-form";
 
 
 
@@ -18,47 +18,31 @@ export default function CreateProfile() {
     const router = useRouter();
     const [file, setFile] = useState(null);
     const [fileDataURL, setFileDataURL] = useState(null);
-    const [formData, setFormData] = useState({
-        profession: '',
-        bio: '',
-    });
 
-    
-
-    const handleChange = (e) => {
-        e.preventDefault();
-        setFormData((prevData) => ({
-            ...prevData,
-            [e.target.id]: e.target.value
-        }));
-    };
-
-    const handleClick = async (e) => {
-        e.preventDefault();
-        const fData = new FormData();
-        fData.append("profession", formData.profession);
-        fData.append("bio", formData.bio);
-
+    const handleClick = async (fdata) => {
         try {
-
             const filename = `${uuidv4()}-${file.name}`;
-            console.log("storing the image");
+            // console.log("storing the image", fdata);
             const { data, error } = await supabase.storage
                 .from("ProfilePics")
                 .upload(filename, file, {
                     cacheControl: "3600",
                     upsert: false,
                 });
+            // console.log(data, "supa");
+            const imgData = await supabase
+                .storage
+                .from("ProfilePics")
+                .getPublicUrl(data.path)
 
-            const filepath = data.path;
-            console.log(filepath)
-            fData.append("profilePhoto", filepath);
+            console.log(imgData, "supa2");
+            fdata.profilePhoto = imgData.data.publicUrl;
 
             const api = axios.create({
                 baseURL: 'http://localhost:5000',
                 withCredentials: true,
             });
-            const res = await api.post('http://localhost:5000/api/user/profile', fData)
+            const res = await api.post('http://localhost:5000/api/user/profile', fdata)
 
             if (res.status == 201) {
                 router.push('/')
@@ -73,6 +57,7 @@ export default function CreateProfile() {
     }
 
     const changeHandler = (e) => {
+        console.log("calling change handler")
         const file = e.target.files[0];
         if (!file.type.match(imageMimeType)) {
             alert("Image mime type is not valid");
@@ -105,12 +90,15 @@ export default function CreateProfile() {
     const {
         register,
         handleSubmit,
-        watch,
         formState: { errors },
-      } = useForm()
+    } = useForm({
+        resolver: yupResolver(profileSchema),
+    })
 
-      const onSubmit = (data) => console.log(data)
-      console.log(watch("example"))
+    const onSubmit = (data) => {
+        console.log(data, errors)
+        handleClick(data);
+    }
 
     return (
         <div className="mx-auto w-full max-w-7xl bg-slate-100 py-2">
@@ -146,12 +134,12 @@ export default function CreateProfile() {
                                     placeholder="Enter your Name"
                                     id="name"
                                     {...register("name")}
-                                    onChange={formik.handleChange}
-                                    onBlur={formik.handleBlur}
-                                ></input>
-                                {formik.touched.name && formik.errors.name ? (
-                                    <p className="form-error">{formik.errors.name}</p>
-                                ) : null}
+                                >
+
+                                </input>
+                                {
+                                    <p className="form-error">{errors.name}</p>
+                                }
                             </div>
                             <div className="w-full">
                                 <label
@@ -165,8 +153,7 @@ export default function CreateProfile() {
                                     type="profession"
                                     placeholder="Enter your profession"
                                     id="profession"
-                                    onChange={formik.handleChange}
-                                    onBlur={formik.handleBlur}
+                                    {...register("profession")}
                                 ></input>
                             </div>
                             <div className="col-span-2 grid">
@@ -182,8 +169,7 @@ export default function CreateProfile() {
                                         type="text"
                                         placeholder="Tell us about yourself"
                                         id="bio"
-                                        onChange={formik.handleChange}
-                                        onBlur={formik.handleBlur}
+                                        {...register("bio")}
                                     ></textarea>
                                 </div>
                             </div>
@@ -199,8 +185,7 @@ export default function CreateProfile() {
                                     type="text"
                                     placeholder="Enter your Country"
                                     id="Country"
-                                    onChange={formik.handleChange}
-                                    onBlur={formik.handleBlur}
+                                    {...register("country")}
                                 ></input>
                             </div>
                             <div className="w-full">
@@ -215,8 +200,7 @@ export default function CreateProfile() {
                                     type="text"
                                     placeholder="Enter your Github Profile"
                                     id="githubProfile"
-                                    onChange={formik.handleChange}
-                                    onBlur={formik.handleBlur}
+                                    {...register("githubProfile")}
                                 ></input>
                             </div>
                             <div className='col-span-2 grid'>
@@ -232,8 +216,9 @@ export default function CreateProfile() {
                                         type="text"
                                         placeholder="Enter your Organization"
                                         id="Organization"
-                                        onChange={formik.handleChange}
-                                        onBlur={formik.handleBlur}
+
+
+                                        {...register("organization")}
                                     ></input>
                                 </div>
                             </div>
@@ -252,7 +237,7 @@ export default function CreateProfile() {
                                                 <p className="mb-2 text-sm text-gray-500 dark:text-gray-400"><span className="font-semibold">Click to upload profile pic</span> or drag and drop profile pic</p>
                                                 <p className="text-xs text-gray-500 dark:text-gray-400">SVG, PNG, JPG or GIF (MAX. 800x400px)</p>
                                             </div>
-                                            <input id="dropzone-file" type="file" accept="image/*" className="hidden" onChange={changeHandler} />
+                                            <input id="dropzone-file" type="file" accept="image/*" className="hidden" {...register("profilePhoto", { onChange: changeHandler })} />
                                         </label>
                                     </div>
                                 </div>
@@ -261,7 +246,6 @@ export default function CreateProfile() {
                                 <button
                                     type="submit"
                                     className="w-full rounded-md bg-black px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-black/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
-                                    onClick={(e) => { handleClick(e) }}
                                 >
                                     Save
                                 </button>

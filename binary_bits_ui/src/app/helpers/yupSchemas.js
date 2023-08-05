@@ -38,11 +38,13 @@ export const profileSchema = Yup.object({
     profession: Yup.string().required('Profession is required'),
     bio: Yup.string().required('Bio is required'),
     country: Yup.string().required('Country is required'),
-    github: Yup.string().url('Invalid GitHub URL').matches(githubProfileRegex, "Invalid GitHub URL"),
+    githubProfile: Yup.string().matches(githubProfileRegex, "Invalid GitHub URL"),
     organization: Yup.string().required('Organization is required'),
-    file: Yup.mixed().required('Please upload a file').test(
-        'fileSize',
+    profilePhoto: Yup.mixed().required('Please upload a file').test(
         'File size is too large',
-        (value) => value && value.size <= 5000000 // 5MB
+        (value) => {
+            // console.log(value,"yup");
+            return (value && value[0].size <= 5000000)
+        } // 5MB
     )
 });

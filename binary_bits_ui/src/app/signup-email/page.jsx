@@ -28,6 +28,7 @@ export default function SignUp() {
                 try {
                     const api = axios.create({
                         baseURL: 'http://localhost:5000',
+                        withCredentials:true,
                     });
                     tid = toast.loading("signing up ...")
                     const res = await api.post('http://localhost:5000/api/user/register-link', values);
@@ -75,6 +76,7 @@ export default function SignUp() {
                 try {
                     const api = axios.create({
                         baseURL: 'http://localhost:5000',
+                        withCredentials:true,
                     });
                     tid = toast.loading("signing up ...")
                     const res = await api.post('http://localhost:5000/api/user/verifyToken', values);

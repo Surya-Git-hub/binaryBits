@@ -5,25 +5,20 @@ const magicController = require("../controllers/magic");
 const profileController = require("../controllers/profile");
 const emailController = require("../controllers/email");
 const { isAuthenticated } = require("../middlewares/isAuthenticated");
-const { isEmailVerified } = require("../middlewares/isEmailVerified");
 const router = express.Router();
 
 //signing routes
-router.post("/register", signingController.register);
-router.post("/login", signingController.login);
-router.post("/register-link",signingController.sendRegisterlink);
-router.post("/verifyToken",signingController.verifyToken)
-
-//magic link routes
-router.post("/magic-login", magicController.login);
-router.get("/verify-magic-link", magicController.verifyLink);
+// router.post("/register", signingController.register);
+// router.post("/login", signingController.login);
+router.post("/register-link", signingController.sendRegisterlink);
+router.post("/verifyToken", signingController.verifyToken)
 
 
 //profile routes
 router.get("/profile:userId", profileController.get);
-router.post("/profile", isAuthenticated, isEmailVerified, profileController.create);
-router.patch("/profile", isAuthenticated, isEmailVerified, profileController.update);
-router.delete("/profile", isAuthenticated, isEmailVerified, profileController.remove)
+router.post("/profile", isAuthenticated, profileController.create);
+router.patch("/profile", isAuthenticated, profileController.update);
+router.delete("/profile", isAuthenticated, profileController.remove)
 
 //verification routes
 router.get("/verify", emailController.verify);
@@ -33,7 +28,7 @@ router.get("/re-verify-email", isAuthenticated, emailController.reVerify);
 router.get("/some", userController.getSome);
 router.get("/user:userId", userController.getOne);
 router.get("/users", userController.getAll);
-router.get("/protected", isAuthenticated, isEmailVerified, userController.getAll);
+router.get("/protected", isAuthenticated, userController.getAll);
 
 //user update routes
 router.patch("/updateOneUser", userController.updateOne);

@@ -25,7 +25,6 @@ const isAuthenticated = async (req, res, next) => {
                         ...req.body,
                         email: user.email,
                         id: user.id,
-                        name: user.name
                     }
                     // res.status(200).json({data:"ok"});
                     next()
