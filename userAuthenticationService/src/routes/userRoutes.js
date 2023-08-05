@@ -21,7 +21,7 @@ router.get("/verify-magic-link", magicController.verifyLink);
 
 //profile routes
 router.get("/profile:userId", profileController.get);
-router.post("/profile", isAuthenticated, isEmailVerified, profileController.create);
+router.post("/profile", isAuthenticated, profileController.create);
 router.patch("/profile", isAuthenticated, isEmailVerified, profileController.update);
 router.delete("/profile", isAuthenticated, isEmailVerified, profileController.remove)
 
