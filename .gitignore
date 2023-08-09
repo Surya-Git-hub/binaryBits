@@ -77,3 +77,4 @@ node_modules/uuid/dist/esm-node/v5.js
 node_modules/uuid/dist/esm-node/v35.js
 node_modules/uuid/dist/esm-node/validate.js
 node_modules/uuid/dist/esm-node/version.js
+.vscode/settings.json
